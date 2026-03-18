@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แบบสอบถามสหกิจศึกษา 2568</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1a3c6e;
+      --primary-light: #e8f0fb;
+      --accent: #2563eb;
+      --success: #16a34a;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .top-bar {
+      background: var(--primary);
+      color: #fff;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    }
+
+    .top-bar-title {
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0.9;
+    }
+
+    .top-bar-step {
+      font-size: 13px;
+      opacity: 0.7;
+    }
+
+    .progress-outer {
+      height: 3px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .progress-inner {
+      height: 3px;
+      background: #60a5fa;
+      transition: width .4s ease;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 28px 16px 80px;
+    }
+
+    .step-header {
+      margin-bottom: 24px;
+    }
+
+    .step-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+
+    .step-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .step-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 12px;
+      transition: border-color .2s;
+    }
+
+    .card:focus-within {
+      border-color: var(--accent);
+    }
+
+    .q-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 4px;
+      line-height: 1.6;
+    }
+
+    .q-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .required {
+      color: #dc2626;
+      margin-left: 2px;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .opt {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all .15s;
+      user-select: none;
+    }
+
+    .opt:hover {
+      background: var(--primary-light);
+      border-color: #93c5fd;
+    }
+
+    .opt.selected {
+      background: var(--primary-light);
+      border-color: var(--accent);
+      color: var(--primary);
+    }
+
+    .opt input {
+      accent-color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .scale-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .scale-btn {
+      flex: 1;
+      padding: 10px 4px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: center;
+      transition: all .15s;
+      color: var(--text-muted);
+    }
+
+    .scale-btn:hover {
+      background: var(--primary-light);
+      border-color: #93c5fd;
+    }
+
+    .scale-btn.selected {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .scale-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    input[type=text],
+    textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text);
+      background: #fff;
+      margin-top: 8px;
+      outline: none;
+      transition: border-color .15s;
+    }
+
+    input[type=text]:focus,
+    textarea:focus {
+      border-color: var(--accent);
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      z-index: 50;
+    }
+
+    .btn {
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      transition: all .15s;
+    }
+
+    .btn:hover {
+      background: var(--bg);
+    }
+
+    .btn:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: #1d4ed8;
+    }
+
+    .dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: all .2s;
+    }
+
+    .dot.done {
+      background: #93c5fd;
+    }
+
+    .dot.active {
+      background: var(--accent);
+      transform: scale(1.3);
+    }
+
+    .success-wrap {
+      text-align: center;
+      padding: 60px 24px;
+    }
+
+    .success-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #dcfce7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 28px;
+    }
+
+    .success-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--success);
+      margin-bottom: 8px;
+    }
+
+    .success-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .error-msg {
+      font-size: 12px;
+      color: #dc2626;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid #fff;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .sending .spinner {
+      display: inline-block;
+    }
+
+    .sending .btn-text {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="top-bar">
+    <span class="top-bar-title">แบบสอบถามสหกิจศึกษา ปีการศึกษา 2568</span>
+    <span class="top-bar-step" id="top-step">1 / 7</span>
+  </div>
+  <div class="progress-outer">
+    <div class="progress-inner" id="prog-bar" style="width:14%"></div>
+  </div>
+
+  <div class="container">
+    <div id="form-area"></div>
+  </div>
+
+  <div class="nav">
+    <button class="btn" id="btn-prev" onclick="prev()" disabled>← ก่อนหน้า</button>
+    <div class="dots" id="dots"></div>
+    <button class="btn btn-primary" id="btn-next" onclick="next()">
+      <span class="btn-text">ถัดไป →</span>
+      <span class="spinner"></span>
+    </button>
+  </div>
+
+  <script>
+    // ─── CONFIG ─────────────────────────────────────────────────────
+    // วาง URL ของ Google Apps Script Web App ที่นี่หลัง deploy
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxtDIx5DbIvurQcVCBNyls77tgJu5fQMpe5EYsFceV4RJpeiwQUgFzy1OunXtNfBVU/exec';
+
+    // ─── STEPS DATA ──────────────────────────────────────────────────
+    const steps = [
+      {
+        badge: 'ส่วนที่ 1 / 7', title: 'ข้อมูลสถานประกอบการ',
+        sub: 'CLO 3, 4  ·  PLO3, PLO6  ·  AUN-QA C6',
+        questions: [
+          { id: 'company', type: 'text', label: '1. ชื่อบริษัท / หน่วยงาน', required: true },
+          { id: 'job_title', type: 'text', label: '2. ชื่อตำแหน่งงาน (Job Title)', required: true },
+          {
+            id: 'need_coding', type: 'radio', label: '3. งานที่ได้รับมอบหมายต้องเขียนโปรแกรมหรือไม่', required: true,
+            opts: ['ต้องเขียนโปรแกรม', 'ไม่ต้องเขียนโปรแกรม']
+          },
+          {
+            id: 'job_type', type: 'radio', label: '4. ลักษณะงานหลักที่ทำ', required: true,
+            opts: ['Software Developer', 'Software Tester', 'Data Science / Data Analyst', 'Business / System Analyst', 'Admin / Network / IT Support / Help Desk', 'UX/UI Design', 'Arts / Graphic Design', 'อื่นๆ']
+          },
+          {
+            id: 'apply_process', type: 'checkbox', label: '5. ขั้นตอนที่ต้องทำในการสมัครงาน', hint: 'เลือกได้มากกว่า 1 ข้อ',
+            opts: ['แสดง Portfolio ผลงาน', 'สอบสัมภาษณ์', 'สอบความรู้ด้าน Technical', 'อื่นๆ']
+          },
+        ]
+      },
+      {
+        badge: 'ส่วนที่ 2 / 7', title: 'การบรรลุผลการเรียนรู้ (CLO/PLO)',
+        sub: 'CLO 1–5  ·  PLO 1–6  ·  AUN-QA C1, C4',
+        questions: [
+          {
+            id: 'clo1', type: 'radio', label: '6. CLO 1 — ท่านได้วิเคราะห์ ออกแบบ หรือพัฒนาระบบสารสนเทศในงานที่ได้รับมอบหมายหรือไม่', required: true,
+            opts: ['ใช่ ทำครบทั้งหมด (วิเคราะห์ + ออกแบบ + พัฒนา)', 'ทำบางส่วน', 'ไม่ได้ทำ']
+          },
+          {
+            id: 'work_used', type: 'radio', label: '7. ผลงานนั้นถูกนำไปใช้จริงในองค์กรหรือไม่',
+            opts: ['ใช่ นำไปใช้จริง', 'บางส่วน', 'ไม่ได้นำไปใช้', 'ยังไม่แล้วเสร็จ']
+          },
+          { id: 'clo2', type: 'scale', label: '8. CLO 2 — ท่านได้เลือกใช้เทคโนโลยีที่เหมาะสมกับงานได้หรือไม่', required: true, lo: 'ไม่ได้เลือกเองเลย', hi: 'เลือกได้เหมาะสมมาก' },
+          { id: 'clo3', type: 'scale', label: '9. CLO 3 — ท่านพัฒนางาน IT ที่สอดคล้องกับความต้องการขององค์กรได้หรือไม่', required: true, lo: 'ทำไม่ได้เลย', hi: 'ทำได้อย่างครบถ้วน' },
+          { id: 'clo4', type: 'scale', label: '10. CLO 4 — ท่านทำงานที่ได้รับมอบหมายได้อย่างมีประสิทธิภาพและตรงเวลาหรือไม่', required: true, lo: 'ไม่ได้เลย', hi: 'มีประสิทธิภาพมาก' },
+          { id: 'clo5', type: 'scale', label: '11. CLO 5 — ท่านทำงานร่วมกับผู้อื่นและนำเสนองานได้โดยคำนึงถึงจรรยาบรรณหรือไม่', required: true, lo: 'ทำไม่ได้เลย', hi: 'ทำได้อย่างดีมาก' },
+          {
+            id: 'plo_weak', type: 'checkbox', label: '12. PLO ที่ท่านคิดว่ายังต้องพัฒนาเพิ่ม', hint: 'เลือกได้มากกว่า 1 ข้อ',
+            opts: ['PLO1: แก้ปัญหาด้าน IT', 'PLO2: ออกแบบฐานข้อมูล', 'PLO3: พัฒนาระบบสารสนเทศ', 'PLO4: ทำงานร่วมกัน / สื่อสาร', 'PLO5: จริยธรรม / AI', 'PLO6: ปฏิบัติงานในสถานประกอบการ', 'ไม่มี บรรลุได้ดีทุก PLO']
+          },
+        ]
+      },
+      {
+        badge: 'ส่วนที่ 3 / 7', title: 'การเรียนรู้และการฝึกอบรม',
+        sub: 'CLO 2, 4  ·  PLO1, PLO6  ·  AUN-QA C3',
+        questions: [
+          {
+            id: 'training_type', type: 'checkbox', label: '13. รูปแบบการ Training ที่บริษัทจัดให้', hint: 'เลือกได้มากกว่า 1 ข้อ',
+            opts: ['Course / Workshop ที่มีวิทยากรสอน', 'พี่เลี้ยง (Mentor) ให้คำปรึกษา', 'เอกสาร / Tutorial ให้ฝึกทำตาม', 'Self-learning ด้วยตัวเอง', 'On-the-job Training โดยตรง', 'ไม่มีการ Training', 'อื่นๆ']
+          },
+          { id: 'univ_ready', type: 'scale', label: '14. ความรู้และทักษะที่ได้จากมหาวิทยาลัยเพียงพอสำหรับการปฏิบัติงานหรือไม่', required: true, lo: 'ไม่เพียงพอเลย', hi: 'เพียงพอมาก' },
+          { id: 'useful_subject', type: 'text', label: '15. วิชาในหลักสูตรที่มีประโยชน์มากที่สุดระหว่างสหกิจ', hint: 'ระบุชื่อวิชา' },
+          { id: 'add_subject', type: 'textarea', label: '16. วิชาหรือหัวข้อที่ควรเพิ่มหรือปรับปรุงในหลักสูตร', hint: 'เช่น Linux, Power BI, Agile, UX/UI' },
+        ]
+      },
+      {
+        badge: 'ส่วนที่ 4 / 7', title: 'ทักษะที่ใช้ในการปฏิบัติงาน',
+        sub: 'CLO 1, 2  ·  PLO1, PLO2, PLO3  ·  AUN-QA C1',
+        questions: [
+          {
+            id: 'lang', type: 'checkbox', label: '17. Programming Language ที่ใช้', hint: 'เลือกได้มากกว่า 1 ข้อ',
+            opts: ['C / C++', 'PHP', 'C# / ASP.NET', 'Java / JSP', 'Python', 'JavaScript / Node.js', 'HTML / CSS', 'TypeScript', 'Mobile (Android / Flutter / React Native)', 'ไม่ได้ใช้', 'อื่นๆ']
+          },
+          {
+            id: 'db', type: 'checkbox', label: '18. DBMS / Database Techniques ที่ใช้', hint: 'เลือกได้มากกว่า 1 ข้อ',
+            opts: ['SQL', 'PostgreSQL', 'MySQL / MariaDB', 'Microsoft SQL Server', 'Oracle', 'NoSQL / Cloud DB (MongoDB, Firebase, Supabase)', 'DB Design / Normalization / ER Diagram', 'Stored Procedure / ORM', 'ไม่ได้ใช้', 'อื่นๆ']
+          },
+          {
+            id: 'framework', type: 'checkbox', label: '19. Libraries / Frameworks ที่ใช้', hint: 'เลือกได้มากกว่า 1 ข้อ',
+            opts: ['React', 'Angular', 'Spring / Spring Boot', 'ASP.NET MVC / Blazor', 'Laravel / CodeIgniter', 'JS Libraries (Chart.js, jQuery)', 'JSON / XML / YAML', 'ไม่ได้ใช้', 'อื่นๆ']
+          },
+          {
+            id: 'tools', type: 'checkbox', label: '20. Software / Tools ที่ใช้', hint: 'เลือกได้มากกว่า 1 ข้อ',
+            opts: ['Git', 'Docker / Kubernetes', 'Power BI / Tableau', 'Figma / Adobe Tools', 'Microsoft Office', 'Postman / API Testing', 'Automated Testing (Selenium)', 'Low-code / No-code', 'อื่นๆ']
+          },
+          {
+            id: 'other_skills', type: 'checkbox', label: '21. Other Skills ที่ใช้', hint: 'เลือกได้มากกว่า 1 ข้อ',
+            opts: ['ภาษาอังกฤษ', 'Business / System Analysis', 'DevOps / CI-CD', 'Agile / Scrum', 'UML / เอกสารระบบ', 'UX/UI Design', 'Linux', 'Network / System Admin', 'IT Support', 'IoT', 'AI / Machine Learning', 'อื่นๆ']
+          },
+        ]
+      },
+      {
+        badge: 'ส่วนที่ 5 / 7', title: 'จริยธรรมและความรับผิดชอบ',
+        sub: 'CLO 5  ·  PLO5  ·  AUN-QA C1, C6',
+        questions: [
+          {
+            id: 'ai_use', type: 'radio', label: '22. บริษัทมีการใช้ AI Tools ในการทำงานหรือไม่', required: true,
+            opts: ['ใช่ และมีแนวปฏิบัติ / ข้อจำกัดชัดเจน', 'ใช่ แต่ไม่มีแนวปฏิบัติที่ชัดเจน', 'ไม่มีการใช้ AI Tools', 'ไม่ทราบ']
+          },
+          { id: 'ai_tools', type: 'text', label: '23. ระบุ AI Tools ที่ใช้ (ถ้ามี)', hint: 'เช่น ChatGPT, GitHub Copilot, Midjourney' },
+          {
+            id: 'data_privacy', type: 'radio', label: '24. บริษัทมีนโยบายด้าน Data Privacy / Security หรือไม่', required: true,
+            opts: ['มีนโยบายชัดเจนและมีการอบรม', 'มีนโยบาย แต่ไม่มีการอบรม', 'ไม่มีนโยบายที่ชัดเจน', 'ไม่ทราบ']
+          },
+        ]
+      },
+      {
+        badge: 'ส่วนที่ 6 / 7', title: 'สวัสดิการและการสนับสนุน',
+        sub: 'CLO 4  ·  PLO4, PLO6  ·  AUN-QA C6',
+        questions: [
+          {
+            id: 'salary', type: 'radio', label: '25. ค่าตอบแทนที่ได้รับ (บาท/เดือน)', required: true,
+            opts: ['ไม่ได้รับ', '1 – 5,000', '5,001 – 10,000', '10,001 – 15,000', '15,001 – 20,000', '20,001 – 30,000', 'มากกว่า 30,000']
+          },
+          {
+            id: 'expense', type: 'radio', label: '26. ค่าใช้จ่ายรายเดือนโดยประมาณ (อาหาร + ที่พัก + เดินทาง)', required: true,
+            opts: ['0 – 5,000', '5,001 – 10,000', '10,001 – 15,000', 'มากกว่า 15,000']
+          },
+          { id: 'advisor_care', type: 'scale', label: '27. อาจารย์นิเทศให้การดูแลและติดตามผลอย่างสม่ำเสมอหรือไม่', required: true, lo: 'ไม่สม่ำเสมอเลย', hi: 'สม่ำเสมอมาก' },
+          { id: 'advisor_feedback', type: 'scale', label: '28. ท่านได้รับ feedback จากอาจารย์นิเทศที่เป็นประโยชน์หรือไม่', required: true, lo: 'ไม่เป็นประโยชน์เลย', hi: 'เป็นประโยชน์มาก' },
+          {
+            id: 'future_it', type: 'radio', label: '29. หลังสหกิจ คาดว่าจะทำงานในสายเทคโนโลยีหรือไม่', required: true,
+            opts: ['ใช่', 'ไม่ใช่', 'ยังไม่แน่ใจ']
+          },
+          {
+            id: 'job_status', type: 'radio', label: '30. สถานะการหางานปัจจุบัน', required: true,
+            opts: ['ได้งานแล้ว', 'กำลังหางาน', 'ยังไม่ได้เริ่มหางาน']
+          },
+          {
+            id: 'invited_back', type: 'radio', label: '31. ได้รับการชักชวนให้สมัครงานต่อที่บริษัทหรือไม่',
+            opts: ['ได้รับการชักชวน', 'ไม่ได้รับการชักชวน']
+          },
+        ]
+      },
+      {
+        badge: 'ส่วนที่ 7 / 7', title: 'คำแนะนำและข้อเสนอแนะ',
+        sub: 'CLO 4, 5  ·  PLO4–6  ·  AUN-QA C3, C4, C6',
+        questions: [
+          { id: 'recommend', type: 'scale', label: '32. ท่านจะแนะนำบริษัทนี้ให้รุ่นน้องมาฝึกสหกิจหรือไม่', required: true, lo: 'ไม่แนะนำเลย', hi: 'แนะนำมาก' },
+          { id: 'advice_junior', type: 'textarea', label: '33. คำแนะนำสำหรับรุ่นน้องในการเตรียมตัว', required: true, hint: 'ด้านทักษะ / ทัศนคติ / การสัมภาษณ์' },
+          { id: 'advice_curriculum', type: 'textarea', label: '34. คำแนะนำต่อหลักสูตร', required: true, hint: 'วิชาที่ควรเพิ่ม / ปรับปรุง / ตัดออก' },
+          { id: 'other_feedback', type: 'textarea', label: '35. ข้อเสนอแนะอื่นๆ', hint: 'ต่อมหาวิทยาลัย / บริษัท / กระบวนการสหกิจ' },
+        ]
+      }
+    ];
+
+    let cur = 0;
+    const ans = {};
+
+    function renderDots() {
+      const d = document.getElementById('dots');
+      d.innerHTML = steps.map((_, i) =>
+        `<div class="dot ${i < cur ? 'done' : i === cur ? 'active' : ''}"></div>`
+      ).join('');
+    }
+
+    function renderProgress() {
+      const pct = Math.round(((cur + 1) / steps.length) * 100);
+      document.getElementById('prog-bar').style.width = pct + '%';
+      document.getElementById('top-step').textContent = `${cur + 1} / ${steps.length}`;
+      renderDots();
+      document.getElementById('btn-prev').disabled = cur === 0;
+      const isLast = cur === steps.length - 1;
+      document.getElementById('btn-next').querySelector('.btn-text').textContent = isLast ? 'ส่งแบบสอบถาม ✓' : 'ถัดไป →';
+    }
+
+    function renderStep() {
+      const s = steps[cur];
+      let html = `<div class="step-header">
+    <span class="step-badge">${s.badge}</span>
+    <div class="step-title">${s.title}</div>
+    <div class="step-sub">${s.sub}</div>
+  </div>`;
+
+      s.questions.forEach(q => {
+        html += `<div class="card">
+      <div class="q-label">${q.label}${q.required ? '<span class="required">*</span>' : ''}</div>`;
+        if (q.hint) html += `<div class="q-hint">${q.hint}</div>`;
+        const v = ans[q.id];
+
+        if (q.type === 'text') {
+          html += `<input type="text" value="${v || ''}" oninput="ans['${q.id}']=this.value" placeholder="พิมพ์คำตอบที่นี่...">`;
+        } else if (q.type === 'textarea') {
+          html += `<textarea oninput="ans['${q.id}']=this.value" placeholder="พิมพ์คำตอบที่นี่...">${v || ''}</textarea>`;
+        } else if (q.type === 'radio') {
+          html += `<div class="options">` + q.opts.map(o =>
+            `<label class="opt${v === o ? ' selected' : ''}" onclick="setRadio('${q.id}','${o}',this)">
+          <input type="radio" name="${q.id}" ${v === o ? 'checked' : ''}> ${o}
+        </label>`).join('') + `</div>`;
+        } else if (q.type === 'checkbox') {
+          const vals = v || [];
+          html += `<div class="options">` + q.opts.map(o =>
+            `<label class="opt${vals.includes(o) ? ' selected' : ''}" onclick="toggleCb('${q.id}','${o}',this)">
+          <input type="checkbox" ${vals.includes(o) ? 'checked' : ''}> ${o}
+        </label>`).join('') + `</div>`;
+        } else if (q.type === 'scale') {
+          html += `<div class="scale-row">` + [1, 2, 3, 4, 5].map(n =>
+            `<button class="scale-btn${v == n ? ' selected' : ''}" onclick="setScale('${q.id}',${n},this)">${n}</button>`
+          ).join('') + `</div>
+      <div class="scale-labels"><span>${q.lo}</span><span>${q.hi}</span></div>`;
+        }
+        html += `</div>`;
+      });
+
+      document.getElementById('form-area').innerHTML = html;
+      renderProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setRadio(id, val, el) {
+      ans[id] = val;
+      el.closest('.options').querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+    function toggleCb(id, val, el) {
+      if (!ans[id]) ans[id] = [];
+      const i = ans[id].indexOf(val);
+      if (i >= 0) { ans[id].splice(i, 1); el.classList.remove('selected'); }
+      else { ans[id].push(val); el.classList.add('selected'); }
+    }
+    function setScale(id, val, el) {
+      ans[id] = val;
+      el.closest('.scale-row').querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function validate() {
+      const s = steps[cur];
+      for (const q of s.questions) {
+        if (!q.required) continue;
+        const v = ans[q.id];
+        if (!v || (Array.isArray(v) && v.length === 0) || v === '') return false;
+      }
+      return true;
+    }
+
+    async function submitForm() {
+      const btn = document.getElementById('btn-next');
+      btn.classList.add('sending');
+      btn.disabled = true;
+      try {
+        const payload = { ...ans, submitted_at: new Date().toISOString() };
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+        document.getElementById('form-area').innerHTML = `
+      <div class="success-wrap">
+        <div class="success-icon">✓</div>
+        <div class="success-title">ขอบคุณที่ตอบแบบสอบถาม!</div>
+        <div class="success-sub">ข้อมูลของท่านถูกบันทึกเรียบร้อยแล้ว<br>ข้อมูลจะถูกนำไปใช้พัฒนาหลักสูตรและประกอบการทำ SAR / AUN-QA</div>
+      </div>`;
+        document.querySelector('.nav').style.display = 'none';
+        document.getElementById('prog-bar').style.width = '100%';
+      } catch (e) {
+        alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+        btn.classList.remove('sending');
+        btn.disabled = false;
+      }
+    }
+
+    function next() {
+      if (!validate()) {
+        alert('กรุณาตอบคำถามที่มีเครื่องหมาย * ให้ครบก่อนครับ');
+        return;
+      }
+      if (cur === steps.length - 1) { submitForm(); return; }
+      cur++;
+      renderStep();
+    }
+    function prev() {
+      if (cur > 0) { cur--; renderStep(); }
+    }
+
+    renderStep();
+  </script>
+</body>
+
+</html>

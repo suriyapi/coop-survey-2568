@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard สหกิจศึกษา 2568</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --primary: #1a3c6e;
+    --accent: #2563eb;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --muted: #64748b;
+    --bg: #f8fafc;
+    --card: #fff;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'IBM Plex Sans Thai', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
+  header {
+    background: var(--primary);
+    color: #fff;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  header h1 { font-size: 16px; font-weight: 500; }
+  header span { font-size: 12px; opacity: .7; }
+  .main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .kpi {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+  }
+  .kpi-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .kpi-value { font-size: 28px; font-weight: 600; color: var(--primary); }
+  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .section-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin: 28px 0 12px; }
+  .chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .chart-title { font-size: 13px; font-weight: 500; margin-bottom: 16px; color: var(--text); }
+  .chart-wrap { position: relative; height: 220px; }
+  .bar-list { display: flex; flex-direction: column; gap: 8px; }
+  .bar-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .bar-label { flex: 0 0 130px; text-align: right; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { flex: 1; height: 18px; background: #f1f5f9; border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width .5s; }
+  .bar-count { flex: 0 0 30px; font-weight: 500; color: var(--text); }
+  .clo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .clo-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+  }
+  .clo-name { font-size: 12px; font-weight: 600; color: var(--primary); margin-bottom: 8px; }
+  .clo-score { font-size: 32px; font-weight: 600; color: var(--text); }
+  .clo-score span { font-size: 14px; color: var(--muted); font-weight: 400; }
+  .clo-bar { height: 6px; background: #f1f5f9; border-radius: 3px; margin-top: 8px; overflow: hidden; }
+  .clo-bar-fill { height: 100%; border-radius: 3px; transition: width .6s; }
+  .score-good { background: #22c55e; }
+  .score-mid  { background: #f59e0b; }
+  .score-low  { background: #ef4444; }
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .tag.lg { font-size: 14px; padding: 5px 14px; color: var(--primary); border-color: #93c5fd; background: #eff6ff; }
+  .tag.xl { font-size: 16px; padding: 6px 16px; color: #1e40af; border-color: #3b82f6; background: #dbeafe; font-weight: 500; }
+  .loading { text-align: center; padding: 60px 24px; color: var(--muted); }
+  .refresh-btn {
+    padding: 7px 16px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,.4);
+    border-radius: 6px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .refresh-btn:hover { background: rgba(255,255,255,.1); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Dashboard สหกิจศึกษา ปีการศึกษา 2568</h1>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span id="last-update">กำลังโหลด...</span>
+    <button class="refresh-btn" onclick="loadData()">↻ รีเฟรช</button>
+  </div>
+</header>
+
+<div class="main">
+  <div id="content"><div class="loading">กำลังโหลดข้อมูล...</div></div>
+</div>
+
+<script>
+// ─── CONFIG ─────────────────────────────────────────────────────
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxtDIx5DbIvurQcVCBNyls77tgJu5fQMpe5EYsFceV4RJpeiwQUgFzy1OunXtNfBVU/exec';
+
+async function loadData() {
+  document.getElementById('last-update').textContent = 'กำลังโหลด...';
+  try {
+    const res = await fetch(SCRIPT_URL + '?action=getData');
+    const data = await res.json();
+    render(data);
+    document.getElementById('last-update').textContent =
+      'อัปเดต: ' + new Date().toLocaleTimeString('th-TH');
+  } catch(e) {
+    document.getElementById('content').innerHTML =
+      '<div class="loading">ไม่สามารถโหลดข้อมูลได้ — กรุณาตรวจสอบ SCRIPT_URL</div>';
+  }
+}
+
+function count(rows, field) {
+  const c = {};
+  rows.forEach(r => {
+    const v = r[field];
+    if (!v) return;
+    if (Array.isArray(v)) v.forEach(x => { c[x] = (c[x]||0)+1; });
+    else c[v] = (c[v]||0)+1;
+  });
+  return c;
+}
+
+function avg(rows, field) {
+  const vals = rows.map(r => +r[field]).filter(v => v >= 1 && v <= 5);
+  return vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length) : 0;
+}
+
+function topN(obj, n=8) {
+  return Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,n);
+}
+
+function render(rows) {
+  if (!rows || rows.length === 0) {
+    document.getElementById('content').innerHTML = '<div class="loading">ยังไม่มีข้อมูล</div>';
+    return;
+  }
+
+  const n = rows.length;
+  const avgCLO = ['clo2','clo3','clo4','clo5'].map(f => avg(rows,f));
+  const overallCLO = (avgCLO.reduce((a,b)=>a+b,0)/avgCLO.length).toFixed(2);
+  const recAvg = avg(rows,'recommend').toFixed(2);
+  const itPct = Math.round(rows.filter(r=>r.future_it==='ใช่').length/n*100);
+  const advisorAvg = avg(rows,'advisor_care').toFixed(2);
+
+  // Job type distribution
+  const jobCounts = count(rows,'job_type');
+  // Salary distribution
+  const salCounts = count(rows,'salary');
+  // Top languages
+  const langCounts = count(rows,'lang');
+  // Top tools
+  const toolCounts = count(rows,'tools');
+  // Top other skills
+  const skillCounts = count(rows,'other_skills');
+  // PLO weak
+  const ploCounts = count(rows,'plo_weak');
+  // AI use
+  const aiCounts = count(rows,'ai_use');
+
+  const cloData = [
+    {key:'clo1', label:'CLO 1 วิเคราะห์/ออกแบบ/พัฒนาระบบ', multi:true},
+    {key:'clo2', label:'CLO 2 เลือกใช้เทคโนโลยีที่เหมาะสม', multi:false},
+    {key:'clo3', label:'CLO 3 พัฒนางาน IT ให้หน่วยงาน', multi:false},
+    {key:'clo4', label:'CLO 4 ความรับผิดชอบ / ประสิทธิภาพ', multi:false},
+    {key:'clo5', label:'CLO 5 จรรยาบรรณ / ทำงานร่วม', multi:false},
+  ];
+
+  const content = document.getElementById('content');
+  content.innerHTML = '';
+
+  // ── KPI ──
+  const kpiDiv = document.createElement('div');
+  kpiDiv.className = 'kpi-grid';
+  kpiDiv.innerHTML = [
+    {label:'ผู้ตอบทั้งหมด', value:n+' คน', sub:'ปีการศึกษา 2568'},
+    {label:'CLO โดยรวม (เฉลี่ย)', value:overallCLO+'/5', sub:'จากคะแนน 1–5'},
+    {label:'แนะนำบริษัท (เฉลี่ย)', value:recAvg+'/5', sub:'คะแนน 1–5'},
+    {label:'ทำงานสายเทคโนโลยี', value:itPct+'%', sub:'ของผู้ตอบทั้งหมด'},
+    {label:'อาจารย์นิเทศ (เฉลี่ย)', value:advisorAvg+'/5', sub:'ความสม่ำเสมอ'},
+  ].map(k=>`<div class="kpi"><div class="kpi-label">${k.label}</div><div class="kpi-value">${k.value}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+  content.appendChild(kpiDiv);
+
+  // ── CLO Scores ──
+  const secCLO = document.createElement('div');
+  secCLO.innerHTML = `<div class="section-title">ผลการบรรลุ CLO (เฉลี่ยจากคะแนน 1–5)</div>`;
+  const cloGrid = document.createElement('div');
+  cloGrid.className = 'clo-grid';
+  cloData.forEach(c => {
+    let scoreVal, scoreStr;
+    if (c.multi) {
+      const cc = count(rows, c.key);
+      const full = (cc['ใช่ ทำครบทั้งหมด (วิเคราะห์ + ออกแบบ + พัฒนา)']||0);
+      scoreVal = (full/n)*5;
+      scoreStr = Math.round((full/n)*100)+'% ทำครบ';
+    } else {
+      scoreVal = avg(rows, c.key);
+      scoreStr = scoreVal.toFixed(2)+'/5';
+    }
+    const pct = Math.min((scoreVal/5)*100, 100);
+    const cls = scoreVal >= 4 ? 'score-good' : scoreVal >= 3 ? 'score-mid' : 'score-low';
+    cloGrid.innerHTML += `<div class="clo-card">
+      <div class="clo-name">${c.label}</div>
+      <div class="clo-score">${scoreStr}</div>
+      <div class="clo-bar"><div class="clo-bar-fill ${cls}" style="width:${pct}%"></div></div>
+    </div>`;
+  });
+  secCLO.appendChild(cloGrid);
+  content.appendChild(secCLO);
+
+  // ── Charts ──
+  const secCharts = document.createElement('div');
+  secCharts.innerHTML = `<div class="section-title">ข้อมูลสถานประกอบการ</div>`;
+  const chartGrid = document.createElement('div');
+  chartGrid.className = 'chart-grid';
+
+  // Job type pie
+  const jobTop = topN(jobCounts, 8);
+  chartGrid.innerHTML += `<div class="chart-card">
+    <div class="chart-title">ลักษณะงานหลักที่ทำ</div>
+    <div class="chart-wrap"><canvas id="chart-job"></canvas></div>
+  </div>`;
+
+  // Salary bar
+  const salOrder = ['ไม่ได้รับ','1 – 5,000','5,001 – 10,000','10,001 – 15,000','15,001 – 20,000','20,001 – 30,000','มากกว่า 30,000'];
+  chartGrid.innerHTML += `<div class="chart-card">
+    <div class="chart-title">ค่าตอบแทนที่ได้รับ (บาท/เดือน)</div>
+    <div class="bar-list" id="sal-bars"></div>
+  </div>`;
+
+  // AI use pie
+  chartGrid.innerHTML += `<div class="chart-card">
+    <div class="chart-title">การใช้ AI Tools ในบริษัท</div>
+    <div class="chart-wrap"><canvas id="chart-ai"></canvas></div>
+  </div>`;
+
+  secCharts.appendChild(chartGrid);
+  content.appendChild(secCharts);
+
+  // Skills section
+  const secSkills = document.createElement('div');
+  secSkills.innerHTML = `<div class="section-title">ทักษะที่ใช้ในการปฏิบัติงาน</div>`;
+
+  const skillGrid = document.createElement('div');
+  skillGrid.className = 'chart-grid';
+
+  // Language bar
+  const langTop = topN(langCounts);
+  let langBars = '<div class="chart-card"><div class="chart-title">Programming Languages</div><div class="bar-list">';
+  const langMax = langTop[0]?.[1]||1;
+  langTop.forEach(([k,v]) => {
+    langBars += `<div class="bar-row"><div class="bar-label">${k}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/langMax*100)}%"></div></div><div class="bar-count">${v}</div></div>`;
+  });
+  langBars += '</div></div>';
+  skillGrid.innerHTML += langBars;
+
+  // Other skills tag cloud
+  const skillTop = topN(skillCounts, 20);
+  const maxSk = skillTop[0]?.[1]||1;
+  let tags = '<div class="chart-card"><div class="chart-title">Other Skills ที่ใช้</div><div class="tag-cloud">';
+  skillTop.forEach(([k,v]) => {
+    const size = v/maxSk >= .7 ? 'xl' : v/maxSk >= .4 ? 'lg' : '';
+    tags += `<span class="tag ${size}">${k} (${v})</span>`;
+  });
+  tags += '</div></div>';
+  skillGrid.innerHTML += tags;
+
+  secSkills.appendChild(skillGrid);
+  content.appendChild(secSkills);
+
+  // PLO weak section
+  const secPLO = document.createElement('div');
+  secPLO.innerHTML = `<div class="section-title">PLO ที่นิสิตระบุว่ายังต้องพัฒนา</div>`;
+  const ploCard = document.createElement('div');
+  ploCard.className = 'chart-card';
+  const ploTop = topN(ploCounts);
+  const ploMax = ploTop[0]?.[1]||1;
+  let ploBars = '<div class="bar-list">';
+  ploTop.forEach(([k,v]) => {
+    ploBars += `<div class="bar-row"><div class="bar-label">${k}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/ploMax*100)}%"></div></div><div class="bar-count">${v}</div></div>`;
+  });
+  ploBars += '</div>';
+  ploCard.innerHTML = ploBars;
+  secPLO.appendChild(ploCard);
+  content.appendChild(secPLO);
+
+  // ── Render Charts ──
+  setTimeout(() => {
+    // Job type doughnut
+    const jobEl = document.getElementById('chart-job');
+    if (jobEl) new Chart(jobEl, {
+      type: 'doughnut',
+      data: {
+        labels: jobTop.map(j=>j[0]),
+        datasets: [{ data: jobTop.map(j=>j[1]),
+          backgroundColor: ['#2563eb','#0891b2','#16a34a','#d97706','#dc2626','#7c3aed','#db2777','#64748b'],
+          borderWidth: 2, borderColor: '#fff' }]
+      },
+      options: { plugins: { legend: { position:'right', labels:{ font:{size:11}, boxWidth:12 } } }, cutout:'60%' }
+    });
+
+    // Salary bars
+    const salDiv = document.getElementById('sal-bars');
+    if (salDiv) {
+      const salMax = Math.max(...salOrder.map(k=>salCounts[k]||0), 1);
+      salDiv.innerHTML = salOrder.map(k => {
+        const v = salCounts[k]||0;
+        return `<div class="bar-row"><div class="bar-label">${k}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/salMax*100)}%"></div></div><div class="bar-count">${v}</div></div>`;
+      }).join('');
+    }
+
+    // AI use doughnut
+    const aiEl = document.getElementById('chart-ai');
+    if (aiEl) {
+      const aiTop = topN(aiCounts);
+      new Chart(aiEl, {
+        type: 'doughnut',
+        data: {
+          labels: aiTop.map(a=>a[0]),
+          datasets: [{ data: aiTop.map(a=>a[1]),
+            backgroundColor: ['#16a34a','#f59e0b','#6b7280','#dc2626'],
+            borderWidth: 2, borderColor: '#fff' }]
+        },
+        options: { plugins: { legend: { position:'right', labels:{ font:{size:11}, boxWidth:12 } } }, cutout:'60%' }
+      });
+    }
+  }, 100);
+}
+
+loadData();
+</script>
+</body>
+</html>
