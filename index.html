@@ -128,8 +128,8 @@ function buildForm(){
       if(q.hint)h+=`<div class="q-hint">${q.hint}</div>`;
       if(q.type==='text')h+=`<input type="text" id="${q.id}" oninput="ans['${q.id}']=this.value;upd()" placeholder="พิมพ์คำตอบที่นี่...">`;
       else if(q.type==='textarea')h+=`<textarea id="${q.id}" oninput="ans['${q.id}']=this.value;upd()" placeholder="พิมพ์คำตอบที่นี่..."></textarea>`;
-      else if(q.type==='radio')h+=`<div class="options">`+q.opts.map(o=>`<label class="opt" onclick="setR('${q.id}','${o.replace(/'/g,"\\'")}',this)"><input type="radio" name="${q.id}"> ${o}</label>`).join('')+`</div>`;
-      else if(q.type==='checkbox')h+=`<div class="options">`+q.opts.map(o=>`<label class="opt" onclick="setCb('${q.id}','${o.replace(/'/g,"\\'")}',this)"><input type="checkbox"> ${o}</label>`).join('')+`</div>`;
+      else if(q.type==='radio')h+=`<div class="options">`+q.opts.map(o=>{const isOther=o==='อื่นๆ';return`<label class="opt" onclick="setR('${q.id}','${o.replace(/'/g,"\\'")}',this)"><input type="radio" name="${q.id}"> ${o}</label>`+(isOther?`<input type="text" id="${q.id}_other" style="display:none;margin-top:6px" placeholder="โปรดระบุ..." oninput="ans['${q.id}_other']=this.value">`:'');}).join('')+`</div>`;
+      else if(q.type==='checkbox')h+=`<div class="options">`+q.opts.map(o=>{const isOther=o==='อื่นๆ';return`<label class="opt" onclick="setCb('${q.id}','${o.replace(/'/g,"\\'")}',this)"><input type="checkbox"> ${o}</label>`+(isOther?`<input type="text" id="${q.id}_other" style="display:none;margin-top:6px" placeholder="โปรดระบุ..." oninput="ans['${q.id}_other']=this.value">`:'');}).join('')+`</div>`;
       else if(q.type==='scale')h+=`<div class="scale-row">`+[1,2,3,4,5].map(n=>`<button type="button" class="scale-btn" onclick="setSc('${q.id}',${n},this)">${n}</button>`).join('')+`</div><div class="scale-labels"><span>${q.lo}</span><span>${q.hi}</span></div>`;
       h+=`</div>`;
     });
@@ -138,8 +138,8 @@ function buildForm(){
   h+=`<div class="submit-wrap"><button class="btn-submit" id="btn-sub" onclick="sub()"><span class="btn-text">ส่งแบบสอบถาม</span><span class="spinner"></span></button></div>`;
   c.innerHTML=h;upd();
 }
-function setR(id,val,el){ans[id]=val;el.closest('.options').querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');upd();}
-function setCb(id,val,el){if(!ans[id])ans[id]=[];const i=ans[id].indexOf(val);if(i>=0){ans[id].splice(i,1);el.classList.remove('selected');}else{ans[id].push(val);el.classList.add('selected');}upd();}
+function showOther(id,show){const el=document.getElementById(id+'_other');if(el){el.style.display=show?'block':'none';if(!show){el.value='';delete ans[id+'_other'];}}}function setR(id,val,el){ans[id]=val;el.closest('.options').querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');showOther(id,val==='อื่นๆ');upd();}
+function setCb(id,val,el){if(!ans[id])ans[id]=[];const i=ans[id].indexOf(val);if(i>=0){ans[id].splice(i,1);el.classList.remove('selected');}else{ans[id].push(val);el.classList.add('selected');}showOther(id,ans[id].includes('อื่นๆ'));upd();}
 function setSc(id,val,el){ans[id]=val;el.closest('.scale-row').querySelectorAll('.scale-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');upd();}
 function upd(){
   const req=sections.flatMap(s=>s.questions.filter(q=>q.required));
