@@ -65,7 +65,7 @@
 </div>
 <div class="container" id="form-container"></div>
 <script>
-const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxtDIx5DbIvurQcVCBNyls77tgJu5fQMpe5EYsFceV4RJpeiwQUgFzy1OunXtNfBVU/exec';
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbyboTdlVO8fJNKqNVcsREuy8QO2Rde5xx9438JFfLWOzyJ43aeuTdnaQIMumQeV3TI/exec';
 const sections=[
   {num:1,title:'ข้อมูลสถานประกอบการ',sub:'CLO 3, 4 · PLO3, PLO6 · AUN-QA C6',questions:[
     {id:'company',type:'text',label:'1. ชื่อบริษัท / หน่วยงาน',required:true},
@@ -128,8 +128,8 @@ function buildForm(){
       if(q.hint)h+=`<div class="q-hint">${q.hint}</div>`;
       if(q.type==='text')h+=`<input type="text" id="${q.id}" oninput="ans['${q.id}']=this.value;upd()" placeholder="พิมพ์คำตอบที่นี่...">`;
       else if(q.type==='textarea')h+=`<textarea id="${q.id}" oninput="ans['${q.id}']=this.value;upd()" placeholder="พิมพ์คำตอบที่นี่..."></textarea>`;
-      else if(q.type==='radio')h+=`<div class="options">`+q.opts.map(o=>{const isOther=o==='อื่นๆ';return`<label class="opt" onclick="setR('${q.id}','${o.replace(/'/g,"\\'")}',this)"><input type="radio" name="${q.id}"> ${o}</label>`+(isOther?`<input type="text" id="${q.id}_other" style="display:none;margin-top:6px" placeholder="โปรดระบุ..." oninput="ans['${q.id}_other']=this.value">`:'');}).join('')+`</div>`;
-      else if(q.type==='checkbox')h+=`<div class="options">`+q.opts.map(o=>{const isOther=o==='อื่นๆ';return`<label class="opt" onclick="setCb('${q.id}','${o.replace(/'/g,"\\'")}',this)"><input type="checkbox"> ${o}</label>`+(isOther?`<input type="text" id="${q.id}_other" style="display:none;margin-top:6px" placeholder="โปรดระบุ..." oninput="ans['${q.id}_other']=this.value">`:'');}).join('')+`</div>`;
+      else if(q.type==='radio')h+=`<div class="options">`+q.opts.map(o=>{const isOther=o==='อื่นๆ';return`<label class="opt"><input type="radio" name="${q.id}" onchange="setR('${q.id}','${o.replace(/'/g,"\\'")}',this.parentElement)"> ${o}</label>`+(isOther?`<input type="text" id="${q.id}_other" style="display:none;margin-top:6px" placeholder="โปรดระบุ..." oninput="ans['${q.id}_other']=this.value">`:'');}).join('')+`</div>`;
+      else if(q.type==='checkbox')h+=`<div class="options">`+q.opts.map(o=>{const isOther=o==='อื่นๆ';return`<label class="opt"><input type="checkbox" onchange="setCb('${q.id}','${o.replace(/'/g,"\\'")}',this.parentElement)"> ${o}</label>`+(isOther?`<input type="text" id="${q.id}_other" style="display:none;margin-top:6px" placeholder="โปรดระบุ..." oninput="ans['${q.id}_other']=this.value">`:'');}).join('')+`</div>`;
       else if(q.type==='scale')h+=`<div class="scale-row">`+[1,2,3,4,5].map(n=>`<button type="button" class="scale-btn" onclick="setSc('${q.id}',${n},this)">${n}</button>`).join('')+`</div><div class="scale-labels"><span>${q.lo}</span><span>${q.hi}</span></div>`;
       h+=`</div>`;
     });
