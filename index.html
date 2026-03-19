@@ -73,9 +73,11 @@ const sections=[
     {id:'first_name',type:'text',label:'ชื่อ',required:true,readonly:true},
     {id:'last_name',type:'text',label:'นามสกุล',required:true,readonly:true},
     {id:'program',type:'display',label:'แผนการเรียน'},
+    {id:'advisor',type:'display',label:'อาจารย์ที่ปรึกษา'},
+    {id:'company',type:'display',label:'ชื่อบริษัท / หน่วยงาน'},
   ]},
   {num:1,title:'ข้อมูลสถานประกอบการ',sub:'CLO 3, 4 · PLO3, PLO6 · AUN-QA C6',questions:[
-    {id:'company',type:'text',label:'1. ชื่อบริษัท / หน่วยงาน',required:true},
+
     {id:'job_title',type:'text',label:'2. ชื่อตำแหน่งงาน (Job Title)',required:true},
     {id:'need_coding',type:'radio',label:'3. งานที่ได้รับมอบหมายต้องเขียนโปรแกรมหรือไม่',required:true,opts:['ต้องเขียนโปรแกรม','ไม่ต้องเขียนโปรแกรม']},
     {id:'job_type',type:'radio',label:'4. ลักษณะงานหลักที่ทำ',required:true,opts:['Software Developer','Software Tester','Data Science / Data Analyst','Business / System Analyst','Admin / Network / IT Support / Help Desk','UX/UI Design','Arts / Graphic Design','อื่นๆ']},
@@ -162,6 +164,8 @@ async function lookupStudent(id){
     const prog=document.getElementById('program-display');
     if(prog)prog.textContent='';
     delete ans['first_name'];delete ans['last_name'];delete ans['program'];
+    delete ans['advisor'];delete ans['company'];
+    ['advisor','program','company'].forEach(f=>{const el=document.getElementById(f+'-display');if(el)el.textContent='';});
     return;
   }
   if(statusEl)statusEl.textContent='กำลังค้นหา...';
@@ -172,12 +176,19 @@ async function lookupStudent(id){
       ans['first_name']=data.first_name;
       ans['last_name']=data.last_name;
       ans['program']=data.program;
+      ans['advisor']=data.advisor||'';
+      ans['company']=data.company||'';
       const fn=document.getElementById('first_name');
       const ln=document.getElementById('last_name');
       if(fn){fn.value=data.first_name;fn.readOnly=true;fn.style.background='#f0fdf4';}
       if(ln){ln.value=data.last_name;ln.readOnly=true;ln.style.background='#f0fdf4';}
+      const badge=(val,color='#E6F1FB',text='#0C447C')=>'<span style="display:inline-block;padding:3px 12px;border-radius:20px;background:'+color+';color:'+text+';font-size:13px;font-weight:500">'+val+'</span>';
       const prog=document.getElementById('program-display');
-      if(prog)prog.innerHTML='<span style="display:inline-block;padding:3px 12px;border-radius:20px;background:#E6F1FB;color:#0C447C;font-size:13px;font-weight:500">'+data.program+'</span>';
+      if(prog)prog.innerHTML=badge(data.program);
+      const adv=document.getElementById('advisor-display');
+      if(adv)adv.innerHTML=badge(data.advisor||'-','#E1F5EE','#085041');
+      const comp=document.getElementById('company-display');
+      if(comp)comp.innerHTML=badge(data.company||'-','#FAEEDA','#633806');
       if(statusEl)statusEl.innerHTML='<span style="color:#16a34a;font-size:12px">✓ พบข้อมูลแล้ว</span>';
     }else{
       ['first_name','last_name'].forEach(f=>{
@@ -187,6 +198,8 @@ async function lookupStudent(id){
       const prog=document.getElementById('program-display');
       if(prog)prog.textContent='';
       delete ans['first_name'];delete ans['last_name'];delete ans['program'];
+      delete ans['advisor'];delete ans['company'];
+      ['advisor','program','company'].forEach(f=>{const el=document.getElementById(f+'-display');if(el)el.textContent='';});
       if(statusEl)statusEl.innerHTML='<span style="color:#dc2626;font-size:12px">✗ '+(data.message||'ไม่พบรหัสนิสิตนี้')+'</span>';
     }
     upd();
