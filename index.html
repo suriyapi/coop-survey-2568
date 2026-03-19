@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>แบบสอบถามสหกิจศึกษา 2568</title>
+<title>แบบสอบถามสหกิจศึกษา</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{--primary:#1a3c6e;--accent:#2563eb;--success:#16a34a;--border:#e2e8f0;--text:#0f172a;--muted:#64748b;--bg:#f8fafc;--card:#ffffff;--radius:12px}
@@ -40,6 +40,13 @@
   input[type=text],textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;color:var(--text);background:#fff;margin-top:8px;outline:none;transition:border-color .15s}
   input[type=text]:focus,textarea:focus{border-color:var(--accent)}
   textarea{min-height:90px;resize:vertical;line-height:1.6}
+  .biz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:8px}
+  .biz-opt{border:1px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:all .15s;user-select:none;display:flex;gap:10px;align-items:flex-start}
+  .biz-opt:hover{background:#eff6ff;border-color:#93c5fd}
+  .biz-opt.selected{background:#eff6ff;border-color:var(--accent)}
+  .biz-opt input{margin-top:3px;accent-color:var(--accent);flex-shrink:0}
+  .biz-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px}
+  .biz-desc{font-size:11px;color:var(--muted);line-height:1.5}
   .btn-submit{width:100%;padding:14px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:8px}
   .btn-submit:hover{background:#1d4ed8}
   .btn-submit:disabled{opacity:.5;cursor:not-allowed}
@@ -56,8 +63,8 @@
 </head>
 <body>
 <header>
-  <h1>แบบสอบถามสหกิจศึกษา ปีการศึกษา 2568</h1>
-  <p>ข้อมูลใช้เพื่อพัฒนาหลักสูตรและประกอบการทำ SAR / AUN-QA · * = คำถามที่จำเป็น</p><p style="font-size:12px;opacity:.6;margin-top:4px">ปีการศึกษา 2568 ภาค 2 (ภาคปลาย)</p>
+  <h1 id="main-title">แบบสอบถามสหกิจศึกษา</h1>
+  <p>ข้อมูลใช้เพื่อพัฒนาหลักสูตรและประกอบการทำ SAR / AUN-QA · * = คำถามที่จำเป็น</p><p style="font-size:12px;opacity:.6;margin-top:4px" id="header-year"></p>
 </header>
 <div class="sticky-top">
   <div class="prog-bar"><div class="prog-fill" id="prog" style="width:0%"></div></div>
@@ -65,8 +72,8 @@
 </div>
 <div class="container" id="form-container"></div>
 <script>
-const SCRIPT_URL='https://script.google.com/macros/s/AKfycbxGCVfOvd-PTesL_LRyDQ-AQGI48zXOfyhz8MYaB56RBO9gVr-UgspFNDny5T9jE-I/exec';
-const CONFIG={academic_year:'2568',semester:'2 (ภาคปลาย)'};
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbwOn6c2qebWU3q-aSZ90FOdR4zhFCv86OwegmqYd-YbupscHVPQnETdEAk_fzoWg_g/exec';
+let CONFIG={academic_year:'2568',semester:'2 (ภาคปลาย)'};
 const sections=[
   {num:0,title:'ข้อมูลนิสิต',sub:'กรุณากรอกข้อมูลให้ครบถ้วน',questions:[
     {id:'student_id',type:'text',label:'รหัสนิสิต',required:true,hint:'กรอกรหัสนิสิต 10 หลัก',lookup:true},
@@ -75,6 +82,7 @@ const sections=[
     {id:'program',type:'display',label:'แผนการเรียน'},
     {id:'advisor',type:'display',label:'อาจารย์ที่ปรึกษา'},
     {id:'company',type:'display',label:'ชื่อบริษัท / หน่วยงาน'},
+    {id:'business_type',type:'biztype',label:'ประเภทของกิจการ',required:true},
   ]},
   {num:1,title:'ข้อมูลสถานประกอบการ',sub:'CLO 3, 4 · PLO3, PLO6 · AUN-QA C6',questions:[
 
@@ -128,6 +136,9 @@ const sections=[
 ];
 const ans={};
 function buildForm(){
+  document.title='แบบสอบถามสหกิจศึกษา '+CONFIG.academic_year;
+  const hy=document.getElementById('header-year');
+  if(hy)hy.textContent='ปีการศึกษา '+CONFIG.academic_year+' ภาค '+CONFIG.semester;
   const c=document.getElementById('form-container');
   let h='';
   sections.forEach(sec=>{
@@ -142,6 +153,29 @@ function buildForm(){
       else if(q.type==='radio')h+=`<div class="options">`+q.opts.map(o=>{const isOther=o==='อื่นๆ';return`<label class="opt"><input type="radio" name="${q.id}" onchange="setR('${q.id}','${o.replace(/'/g,"\\'")}',this.parentElement)"> ${o}</label>`+(isOther?`<input type="text" id="${q.id}_other" style="display:none;margin-top:6px" placeholder="โปรดระบุ..." oninput="ans['${q.id}_other']=this.value">`:'');}).join('')+`</div>`;
       else if(q.type==='checkbox')h+=`<div class="options">`+q.opts.map(o=>{const isOther=o==='อื่นๆ';return`<label class="opt"><input type="checkbox" onchange="setCb('${q.id}','${o.replace(/'/g,"\\'")}',this.parentElement)"> ${o}</label>`+(isOther?`<input type="text" id="${q.id}_other" style="display:none;margin-top:6px" placeholder="โปรดระบุ..." oninput="ans['${q.id}_other']=this.value">`:'');}).join('')+`</div>`;
       else if(q.type==='display')h+=`<div id="${q.id}-display" style="margin-top:8px;min-height:28px"></div>`;
+      else if(q.type==='biztype'){
+        const bizOpts=[
+          {v:'บริษัท IT / Software House',d:'บริษัทที่ธุรกิจหลักคือพัฒนา software หรือรับทำระบบให้ลูกค้า'},
+          {v:'In-house IT',d:'องค์กรที่ไม่ใช่ IT แต่มีทีม IT ภายใน เช่น ธนาคาร โรงพยาบาล ห้างสรรพสินค้า โรงงาน'},
+          {v:'Startup',d:'บริษัทเทคโนโลยีขนาดเล็ก เพิ่งก่อตั้ง เน้นเติบโตเร็ว มักได้รับการลงทุนจากภายนอก'},
+          {v:'SME',d:'ธุรกิจขนาดกลาง-เล็กทั่วไป ที่ใช้ IT สนับสนุนการทำงาน'},
+          {v:'รัฐวิสาหกิจ',d:'เช่น การไฟฟ้า การประปา ธนาคารออมสิน ปตท.'},
+          {v:'หน่วยงานราชการ',d:'กรม กระทรวง มหาวิทยาลัยรัฐ องค์กรภาครัฐ'},
+          {v:'NGO / มูลนิธิ',d:'องค์กรไม่แสวงหากำไร มูลนิธิ สมาคม'},
+          {v:'อื่นๆ',d:'ประเภทกิจการที่ไม่อยู่ในรายการข้างต้น'},
+        ];
+        const curBiz=ans[q.id]||'';
+        const qid=q.id;
+        let bizHtml='<div class="biz-grid">';
+        bizOpts.forEach(function(o){
+          var sel=curBiz===o.v?' selected':'';
+          var chk=curBiz===o.v?'checked':'';
+          bizHtml+='<label class="biz-opt'+sel+'" onclick="setBiz(\''+qid+'\',\''+o.v+'\',this)"><input type="radio" name="'+qid+'" '+chk+'> <div><div class="biz-title">'+o.v+'</div><div class="biz-desc">'+o.d+'</div></div></label>';
+          if(o.v==='อื่นๆ'){var ov=ans[qid+'_other']||'';var dp=curBiz==='อื่นๆ'?'block':'none';bizHtml+='<input type="text" id="'+qid+'_other" style="display:'+dp+';margin-top:6px" placeholder="โปรดระบุประเภทกิจการ..." oninput="ans[\''+qid+'_other\']=this.value" value="'+ov+'">';}
+        });
+        bizHtml+='</div>';
+        h+=bizHtml;
+      }
       else if(q.type==='scale')h+=`<div class="scale-row">`+[1,2,3,4,5].map(n=>`<button type="button" class="scale-btn" onclick="setSc('${q.id}',${n},this)">${n}</button>`).join('')+`</div><div class="scale-labels"><span>${q.lo}</span><span>${q.hi}</span></div>`;
       h+=`</div>`;
     });
@@ -155,6 +189,7 @@ function setCb(id,val,el){if(!ans[id])ans[id]=[];const i=ans[id].indexOf(val);if
 function setSc(id,val,el){ans[id]=val;el.closest('.scale-row').querySelectorAll('.scale-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');upd();}
 async function lookupStudent(id){
   const statusEl=document.getElementById('lookup-status');
+  ans['student_id']=id;
   if(id.length<10){
     if(statusEl)statusEl.textContent='';
     ['first_name','last_name'].forEach(f=>{
@@ -163,7 +198,7 @@ async function lookupStudent(id){
     });
     const prog=document.getElementById('program-display');
     if(prog)prog.textContent='';
-    delete ans['first_name'];delete ans['last_name'];delete ans['program'];
+    delete ans['student_id'];delete ans['first_name'];delete ans['last_name'];delete ans['program'];
     delete ans['advisor'];delete ans['company'];
     ['advisor','program','company'].forEach(f=>{const el=document.getElementById(f+'-display');if(el)el.textContent='';});
     return;
@@ -207,6 +242,17 @@ async function lookupStudent(id){
     if(statusEl)statusEl.innerHTML='<span style="color:#dc2626;font-size:12px">✗ เกิดข้อผิดพลาด กรุณาลองใหม่</span>';
   }
 }
+function setBiz(id,val,el){
+  ans[id]=val;
+  el.closest('.biz-grid').querySelectorAll('.biz-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  const otherInput=document.getElementById(id+'_other');
+  if(otherInput){
+    otherInput.style.display=val==='อื่นๆ'?'block':'none';
+    if(val!=='อื่นๆ'){otherInput.value='';delete ans[id+'_other'];}
+  }
+  upd();
+}
 function upd(){
   const req=sections.flatMap(s=>s.questions.filter(q=>q.required));
   const done=req.filter(q=>{const v=ans[q.id];return v&&(Array.isArray(v)?v.length>0:v!=='');}).length;
@@ -235,7 +281,22 @@ async function sub(){
     btn.classList.remove('sending');btn.disabled=false;
   }
 }
-buildForm();
+async function init(){
+  try{
+    const r=await fetch(SCRIPT_URL+'?action=getConfig');
+    const cfg=await r.json();
+    if(cfg.academic_year) CONFIG.academic_year=cfg.academic_year;
+    if(cfg.semester) CONFIG.semester=cfg.semester;
+  }catch(e){
+    console.warn('ใช้ CONFIG default เพราะโหลดไม่ได้:', e);
+  }
+  const t='แบบสอบถามสหกิจศึกษา ปีการศึกษา '+CONFIG.academic_year;
+  document.title=t;
+  const h=document.getElementById('main-title');
+  if(h)h.textContent=t;
+  buildForm();
+}
+init();
 </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard สหกิจศึกษา 2568</title>
+<title>Dashboard สหกิจศึกษา</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
@@ -83,7 +83,7 @@ select{padding:4px 10px;border:1px solid var(--border);border-radius:8px;font-fa
   <div class="header-inner">
     <div><h1>Dashboard สหกิจศึกษา</h1><p>ระบบวิเคราะห์ข้อมูลสหกิจศึกษา · SAR / AUN-QA</p></div>
     <div class="header-right">
-      <span class="year-badge" id="year-badge">ปีการศึกษา 2568</span>
+      <span class="year-badge" id="year-badge">กำลังโหลด...</span>
       <button class="refresh-btn" onclick="loadData()"><span id="ri">↻</span> รีเฟรช</button>
     </div>
   </div>
@@ -101,7 +101,7 @@ select{padding:4px 10px;border:1px solid var(--border);border-radius:8px;font-fa
   <div class="loading"><div class="spin-lg"></div><div>กำลังโหลดข้อมูล...</div></div>
 </div>
 <script>
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxGCVfOvd-PTesL_LRyDQ-AQGI48zXOfyhz8MYaB56RBO9gVr-UgspFNDny5T9jE-I/exec";
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwOn6c2qebWU3q-aSZ90FOdR4zhFCv86OwegmqYd-YbupscHVPQnETdEAk_fzoWg_g/exec";
 const C=["#2563eb","#0d9488","#d97706","#e11d48","#7c3aed","#0891b2","#65a30d","#db2777","#16a34a","#0f766e"];
 let all=[],filtered=[],ch={};
 function cnt(rows,f){const c={};rows.forEach(r=>{const v=r[f];if(!v)return;if(Array.isArray(v))v.forEach(x=>{c[x]=(c[x]||0)+1;});else c[String(v)]=(c[String(v)]||0)+1;});return c;}
@@ -112,6 +112,18 @@ function sc(v){return v>=4?"#16a34a":v>=3?"#d97706":"#e11d48";}
 function scl(v){return v>=4?"sh":v>=3?"sm":"sl";}
 function dc(id){if(ch[id]){ch[id].destroy();delete ch[id];}}
 async function loadData(){
+  try{
+    const cr=await fetch(SCRIPT_URL+"?action=getConfig",{redirect:"follow"});
+    const cfg=await cr.json();
+    if(cfg.academic_year){
+      const yr='ปีการศึกษา '+cfg.academic_year;
+      document.title='Dashboard สหกิจศึกษา '+cfg.academic_year;
+      const yb=document.getElementById("year-badge");
+      if(yb)yb.textContent=yr;
+    }
+  }catch(e){
+    document.getElementById("year-badge").textContent="ปีการศึกษา 2568";
+  }
   document.getElementById("ri").classList.add("spin");
   document.getElementById("main").innerHTML="<div class=\"loading\"><div class=\"spin-lg\"></div><div>กำลังโหลดข้อมูล...</div></div>";
   try{
