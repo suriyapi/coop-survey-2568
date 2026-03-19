@@ -4,349 +4,293 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard สหกิจศึกษา 2568</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  :root {
-    --primary: #1a3c6e;
-    --accent: #2563eb;
-    --border: #e2e8f0;
-    --text: #0f172a;
-    --muted: #64748b;
-    --bg: #f8fafc;
-    --card: #fff;
-    --radius: 12px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'IBM Plex Sans Thai', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
-  header {
-    background: var(--primary);
-    color: #fff;
-    padding: 16px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky; top: 0; z-index: 100;
-  }
-  header h1 { font-size: 16px; font-weight: 500; }
-  header span { font-size: 12px; opacity: .7; }
-  .main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
-  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
-  .kpi {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px 20px;
-  }
-  .kpi-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-  .kpi-value { font-size: 28px; font-weight: 600; color: var(--primary); }
-  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .section-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin: 28px 0 12px; }
-  .chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 24px; }
-  .chart-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-  }
-  .chart-title { font-size: 13px; font-weight: 500; margin-bottom: 16px; color: var(--text); }
-  .chart-wrap { position: relative; height: 220px; }
-  .bar-list { display: flex; flex-direction: column; gap: 8px; }
-  .bar-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-  .bar-label { flex: 0 0 130px; text-align: right; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .bar-track { flex: 1; height: 18px; background: #f1f5f9; border-radius: 4px; overflow: hidden; }
-  .bar-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width .5s; }
-  .bar-count { flex: 0 0 30px; font-weight: 500; color: var(--text); }
-  .clo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
-  .clo-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px 20px;
-  }
-  .clo-name { font-size: 12px; font-weight: 600; color: var(--primary); margin-bottom: 8px; }
-  .clo-score { font-size: 32px; font-weight: 600; color: var(--text); }
-  .clo-score span { font-size: 14px; color: var(--muted); font-weight: 400; }
-  .clo-bar { height: 6px; background: #f1f5f9; border-radius: 3px; margin-top: 8px; overflow: hidden; }
-  .clo-bar-fill { height: 100%; border-radius: 3px; transition: width .6s; }
-  .score-good { background: #22c55e; }
-  .score-mid  { background: #f59e0b; }
-  .score-low  { background: #ef4444; }
-  .tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
-  .tag {
-    font-size: 12px;
-    padding: 3px 10px;
-    border-radius: 20px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--muted);
-  }
-  .tag.lg { font-size: 14px; padding: 5px 14px; color: var(--primary); border-color: #93c5fd; background: #eff6ff; }
-  .tag.xl { font-size: 16px; padding: 6px 16px; color: #1e40af; border-color: #3b82f6; background: #dbeafe; font-weight: 500; }
-  .loading { text-align: center; padding: 60px 24px; color: var(--muted); }
-  .refresh-btn {
-    padding: 7px 16px;
-    background: transparent;
-    border: 1px solid rgba(255,255,255,.4);
-    border-radius: 6px;
-    color: #fff;
-    font-family: inherit;
-    font-size: 13px;
-    cursor: pointer;
-    transition: background .15s;
-  }
-  .refresh-btn:hover { background: rgba(255,255,255,.1); }
+:root{--navy:#0f2044;--blue:#2563eb;--teal:#0d9488;--amber:#d97706;--rose:#e11d48;--green:#16a34a;--purple:#7c3aed;--cyan:#0891b2;--bg:#f0f4f8;--card:#fff;--border:#e2e8f0;--text:#0f172a;--muted:#64748b;--radius:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Sarabun",sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6}
+.header{background:var(--navy);color:#fff}
+.header-inner{max-width:1200px;margin:0 auto;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.header-inner h1{font-size:18px;font-weight:600}
+.header-inner p{font-size:11px;opacity:.55;margin-top:2px;font-family:"IBM Plex Mono",monospace}
+.header-right{display:flex;align-items:center;gap:8px}
+.year-badge{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:4px 12px;font-size:13px;font-weight:500}
+.refresh-btn{background:transparent;border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#fff;padding:5px 12px;font-family:inherit;font-size:13px;cursor:pointer}
+.refresh-btn:hover{background:rgba(255,255,255,.1)}
+.spin{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.filter-bar{background:#fff;border-bottom:1px solid var(--border);padding:8px 0}
+.filter-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.filter-inner label{font-size:13px;color:var(--muted);font-weight:500}
+select{padding:4px 10px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:var(--text);background:#fff;outline:none}
+.filter-count{font-size:11px;padding:2px 10px;border-radius:20px;background:#e0f2fe;color:#0369a1;font-weight:500}
+.main{max-width:1200px;margin:0 auto;padding:24px}
+.sec-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:28px 0 12px;display:flex;align-items:center;gap:8px}
+.sec-label::after{content:"";flex:1;height:1px;background:var(--border)}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;position:relative;overflow:hidden}
+.kpi-accent{position:absolute;top:0;left:0;width:4px;height:100%}
+.kpi-label{font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500}
+.kpi-value{font-size:28px;font-weight:700;line-height:1}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:5px}
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.chart-grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.card-title{font-size:14px;font-weight:600;margin-bottom:3px}
+.card-sub{font-size:12px;color:var(--muted);margin-bottom:14px}
+.chart-wrap{position:relative;height:220px}
+.chart-sm{position:relative;height:180px}
+.clo-grid{display:grid;grid-template-columns:280px 1fr;gap:16px}
+.clo-item{padding:10px 14px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px}
+.clo-name{font-size:12px;font-weight:600;color:var(--navy);margin-bottom:6px}
+.clo-bar-wrap{display:flex;align-items:center;gap:8px}
+.clo-bg{flex:1;height:6px;background:#f1f5f9;border-radius:3px;overflow:hidden}
+.clo-fill{height:100%;border-radius:3px;transition:width .6s}
+.clo-score{font-size:13px;font-weight:600;min-width:60px;text-align:right}
+.bar-list{display:flex;flex-direction:column;gap:7px}
+.bar-row{display:flex;align-items:center;gap:8px;font-size:12px}
+.bar-label{flex:0 0 130px;text-align:right;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;height:20px;background:#f1f5f9;border-radius:6px;overflow:hidden}
+.bar-fill{height:100%;border-radius:6px;transition:width .5s;display:flex;align-items:center;justify-content:flex-end;padding-right:6px}
+.bar-fill span{font-size:11px;font-weight:600;color:#fff}
+.tag-cloud{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:12px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--muted);background:#f8fafc}
+.tag.lg{font-size:13px;padding:4px 12px;color:var(--navy);border-color:#93c5fd;background:#eff6ff;font-weight:500}
+.tag.xl{font-size:14px;padding:5px 14px;color:#1e40af;border-color:#3b82f6;background:#dbeafe;font-weight:600}
+.pie-legend{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.pie-leg{display:flex;align-items:center;gap:8px;font-size:12px}
+.pie-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.advisor-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.adv-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.adv-name{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.adv-n{font-size:24px;font-weight:700;color:var(--blue)}
+.adv-sub{font-size:11px;color:var(--muted)}
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{background:#f8fafc;padding:8px 12px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:2px solid var(--border)}
+.dtable td{padding:8px 12px;border-bottom:1px solid var(--border)}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:#f8fafc}
+.sbadge{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;font-size:13px;font-weight:700}
+.sh{background:#dcfce7;color:#16a34a}.sm{background:#fef3c7;color:#d97706}.sl{background:#ffe4e6;color:#e11d48}
+.loading{text-align:center;padding:60px;color:var(--muted)}
+.spin-lg{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@media(max-width:700px){.clo-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-
-<header>
-  <h1>Dashboard สหกิจศึกษา ปีการศึกษา 2568</h1>
-  <div style="display:flex;align-items:center;gap:12px">
-    <span id="last-update">กำลังโหลด...</span>
-    <button class="refresh-btn" onclick="loadData()">↻ รีเฟรช</button>
+<div class="header">
+  <div class="header-inner">
+    <div><h1>Dashboard สหกิจศึกษา</h1><p>ระบบวิเคราะห์ข้อมูลสหกิจศึกษา · SAR / AUN-QA</p></div>
+    <div class="header-right">
+      <span class="year-badge" id="year-badge">ปีการศึกษา 2568</span>
+      <button class="refresh-btn" onclick="loadData()"><span id="ri">↻</span> รีเฟรช</button>
+    </div>
   </div>
-</header>
-
-<div class="main">
-  <div id="content"><div class="loading">กำลังโหลดข้อมูล...</div></div>
 </div>
-
+<div class="filter-bar">
+  <div class="filter-inner">
+    <label>กรอง:</label>
+    <select id="fy" onchange="applyFilter()"><option value="">ทุกปีการศึกษา</option></select>
+    <select id="fp" onchange="applyFilter()"><option value="">ทุกแผน</option><option>ปกติ</option><option>ภาคพิเศษ</option></select>
+    <select id="fa" onchange="applyFilter()"><option value="">ทุกอาจารย์</option></select>
+    <span class="filter-count" id="fc"></span>
+  </div>
+</div>
+<div class="main" id="main">
+  <div class="loading"><div class="spin-lg"></div><div>กำลังโหลดข้อมูล...</div></div>
+</div>
 <script>
-// ─── CONFIG ─────────────────────────────────────────────────────
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxGCVfOvd-PTesL_LRyDQ-AQGI48zXOfyhz8MYaB56RBO9gVr-UgspFNDny5T9jE-I/exec';
-
-async function loadData() {
-  document.getElementById('last-update').textContent = 'กำลังโหลด...';
-  try {
-    const res = await fetch(SCRIPT_URL + '?action=getData');
-    const data = await res.json();
-    render(data);
-    document.getElementById('last-update').textContent =
-      'อัปเดต: ' + new Date().toLocaleTimeString('th-TH');
-  } catch(e) {
-    document.getElementById('content').innerHTML =
-      '<div class="loading">ไม่สามารถโหลดข้อมูลได้ — กรุณาตรวจสอบ SCRIPT_URL</div>';
-  }
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxGCVfOvd-PTesL_LRyDQ-AQGI48zXOfyhz8MYaB56RBO9gVr-UgspFNDny5T9jE-I/exec";
+const C=["#2563eb","#0d9488","#d97706","#e11d48","#7c3aed","#0891b2","#65a30d","#db2777","#16a34a","#0f766e"];
+let all=[],filtered=[],ch={};
+function cnt(rows,f){const c={};rows.forEach(r=>{const v=r[f];if(!v)return;if(Array.isArray(v))v.forEach(x=>{c[x]=(c[x]||0)+1;});else c[String(v)]=(c[String(v)]||0)+1;});return c;}
+function avg(rows,f){const v=rows.map(r=>+r[f]).filter(v=>v>=1&&v<=5);return v.length?v.reduce((a,b)=>a+b,0)/v.length:0;}
+function topN(o,n=8){return Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,n);}
+function pct(a,b){return b?Math.round(a/b*100):0;}
+function sc(v){return v>=4?"#16a34a":v>=3?"#d97706":"#e11d48";}
+function scl(v){return v>=4?"sh":v>=3?"sm":"sl";}
+function dc(id){if(ch[id]){ch[id].destroy();delete ch[id];}}
+async function loadData(){
+  document.getElementById("ri").classList.add("spin");
+  try{
+    const r=await fetch(SCRIPT_URL+"?action=getData");
+    all=await r.json();
+    if(!Array.isArray(all))all=[];
+    buildFilters();applyFilter();
+  }catch(e){document.getElementById("main").innerHTML="<div class=\"loading\">โหลดข้อมูลไม่สำเร็จ กรุณาตรวจสอบ SCRIPT_URL</div>";}
+  document.getElementById("ri").classList.remove("spin");
 }
-
-function count(rows, field) {
-  const c = {};
-  rows.forEach(r => {
-    const v = r[field];
-    if (!v) return;
-    if (Array.isArray(v)) v.forEach(x => { c[x] = (c[x]||0)+1; });
-    else c[v] = (c[v]||0)+1;
-  });
-  return c;
+function buildFilters(){
+  const years=[...new Set(all.map(r=>r.academic_year).filter(Boolean))].sort();
+  const fy=document.getElementById("fy");
+  years.forEach(y=>{const o=document.createElement("option");o.value=y;o.textContent="ปีการศึกษา "+y;fy.appendChild(o);});
+  if(years.length===1)fy.value=years[0];
+  const advs=[...new Set(all.map(r=>r.advisor).filter(Boolean))].sort();
+  const fa=document.getElementById("fa");
+  advs.forEach(a=>{const o=document.createElement("option");o.value=a;o.textContent=a;fa.appendChild(o);});
 }
-
-function avg(rows, field) {
-  const vals = rows.map(r => +r[field]).filter(v => v >= 1 && v <= 5);
-  return vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length) : 0;
+function applyFilter(){
+  const y=document.getElementById("fy").value,p=document.getElementById("fp").value,a=document.getElementById("fa").value;
+  filtered=all.filter(r=>(!y||r.academic_year===y)&&(!p||r.program===p)&&(!a||r.advisor===a));
+  document.getElementById("fc").textContent=filtered.length+" รายการ";
+  render(filtered);
 }
-
-function topN(obj, n=8) {
-  return Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,n);
-}
-
-function render(rows) {
-  if (!rows || rows.length === 0) {
-    document.getElementById('content').innerHTML = '<div class="loading">ยังไม่มีข้อมูล</div>';
-    return;
-  }
-
-  const n = rows.length;
-  const avgCLO = ['clo2','clo3','clo4','clo5'].map(f => avg(rows,f));
-  const overallCLO = (avgCLO.reduce((a,b)=>a+b,0)/avgCLO.length).toFixed(2);
-  const recAvg = avg(rows,'recommend').toFixed(2);
-  const itPct = Math.round(rows.filter(r=>r.future_it==='ใช่').length/n*100);
-  const advisorAvg = avg(rows,'advisor_care').toFixed(2);
-
-  // Job type distribution
-  const jobCounts = count(rows,'job_type');
-  // Salary distribution
-  const salCounts = count(rows,'salary');
-  // Top languages
-  const langCounts = count(rows,'lang');
-  // Top tools
-  const toolCounts = count(rows,'tools');
-  // Top other skills
-  const skillCounts = count(rows,'other_skills');
-  // PLO weak
-  const ploCounts = count(rows,'plo_weak');
-  // AI use
-  const aiCounts = count(rows,'ai_use');
-
-  const cloData = [
-    {key:'clo1', label:'CLO 1 วิเคราะห์/ออกแบบ/พัฒนาระบบ', multi:true},
-    {key:'clo2', label:'CLO 2 เลือกใช้เทคโนโลยีที่เหมาะสม', multi:false},
-    {key:'clo3', label:'CLO 3 พัฒนางาน IT ให้หน่วยงาน', multi:false},
-    {key:'clo4', label:'CLO 4 ความรับผิดชอบ / ประสิทธิภาพ', multi:false},
-    {key:'clo5', label:'CLO 5 จรรยาบรรณ / ทำงานร่วม', multi:false},
+function render(rows){
+  if(!rows||rows.length===0){document.getElementById("main").innerHTML="<div class=\"loading\">ยังไม่มีข้อมูล</div>";return;}
+  Object.keys(ch).forEach(k=>{ch[k].destroy();delete ch[k];});
+  const n=rows.length;
+  const overallCLO=((avg(rows,"clo2")+avg(rows,"clo3")+avg(rows,"clo4")+avg(rows,"clo5"))/4);
+  const univR=avg(rows,"univ_ready");
+  const main=document.getElementById("main");
+  main.innerHTML=`
+<div class="sec-label">ภาพรวม</div>
+<div class="kpi-grid" id="kpi-grid"></div>
+<div class="sec-label">ผลการบรรลุ CLO/PLO — AUN-QA C1, C4</div>
+<div class="clo-grid">
+  <div id="clo-list"></div>
+  <div class="card"><div class="card-title">CLO Radar Chart</div><div class="card-sub">เปรียบเทียบ 5 CLO (คะแนน 1–5)</div><div class="chart-wrap"><canvas id="radar"></canvas></div></div>
+</div>
+<div style="margin-top:16px" class="chart-grid">
+  <div class="card"><div class="card-title">PLO ที่ต้องพัฒนาเพิ่ม</div><div class="card-sub">AUN-QA C1 — ใช้ปรับหลักสูตร</div><div class="bar-list" id="plo-bars"></div></div>
+  <div class="card"><div class="card-title">CLO 1 — บรรลุระดับไหน</div><div class="card-sub">สัดส่วนนิสิตที่ทำได้ครบ/บางส่วน/ไม่ได้</div><div class="chart-sm"><canvas id="clo1-pie"></canvas></div></div>
+</div>
+<div class="sec-label">ลักษณะงานและทักษะ — AUN-QA C1, C6</div>
+<div class="chart-grid">
+  <div class="card"><div class="card-title">ลักษณะงานหลักที่ทำ</div><div class="card-sub"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center"><div class="chart-sm"><canvas id="job-pie"></canvas></div><div class="pie-legend" id="job-leg"></div></div></div>
+  <div class="card"><div class="card-title">Programming Languages</div><div class="card-sub">Top 8 ที่ใช้จริงในองค์กร</div><div class="bar-list" id="lang-bars"></div></div>
+</div>
+<div class="chart-grid-3" style="margin-top:16px">
+  <div class="card"><div class="card-title">Database / DBMS</div><div class="card-sub">Top 6</div><div class="bar-list" id="db-bars"></div></div>
+  <div class="card"><div class="card-title">Frameworks / Libraries</div><div class="card-sub">Top 6</div><div class="bar-list" id="fw-bars"></div></div>
+  <div class="card"><div class="card-title">Other Skills</div><div class="card-sub">ขนาด = ความถี่</div><div class="tag-cloud" id="skill-cloud"></div></div>
+</div>
+<div class="sec-label">การเรียนรู้และหลักสูตร — AUN-QA C3</div>
+<div class="chart-grid">
+  <div class="card"><div class="card-title">รูปแบบ Training ที่บริษัทจัดให้</div><div class="card-sub"></div><div class="bar-list" id="train-bars"></div></div>
+  <div class="card"><div class="card-title">ความเพียงพอของความรู้จาก ม. (${univR.toFixed(2)}/5)</div><div class="card-sub">การกระจายคะแนน 1–5</div><div class="chart-sm"><canvas id="ready-bar"></canvas></div></div>
+</div>
+<div class="sec-label">จริยธรรมและ AI — PLO5, AUN-QA C1</div>
+<div class="chart-grid">
+  <div class="card"><div class="card-title">การใช้ AI Tools ในองค์กร</div><div class="card-sub"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center"><div class="chart-sm"><canvas id="ai-pie"></canvas></div><div class="pie-legend" id="ai-leg"></div></div></div>
+  <div class="card"><div class="card-title">นโยบาย Data Privacy</div><div class="card-sub"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center"><div class="chart-sm"><canvas id="priv-pie"></canvas></div><div class="pie-legend" id="priv-leg"></div></div></div>
+</div>
+<div class="sec-label">สวัสดิการและการสนับสนุน — AUN-QA C6</div>
+<div class="chart-grid">
+  <div class="card"><div class="card-title">ค่าตอบแทน (บาท/เดือน)</div><div class="card-sub">การกระจายค่าตอบแทน</div><div class="bar-list" id="salary-bars"></div></div>
+  <div class="card"><div class="card-title">สถานะการหางานหลังสหกิจ</div><div class="card-sub"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center"><div class="chart-sm"><canvas id="js-pie"></canvas></div><div class="pie-legend" id="js-leg"></div></div></div>
+</div>
+<div class="sec-label">อาจารย์ที่ปรึกษา — AUN-QA C7</div>
+<div class="chart-grid">
+  <div class="card"><div class="card-title">จำนวนนิสิตต่ออาจารย์</div><div class="card-sub"></div><div class="advisor-cards" id="adv-cards"></div></div>
+  <div class="card"><div class="card-title">คะแนนการนิเทศ (1–5)</div><div class="card-sub">ความสม่ำเสมอในการดูแล</div><div class="bar-list" id="adv-scores"></div></div>
+</div>
+<div class="sec-label">สถานประกอบการ</div>
+<div class="card"><div class="card-title">บริษัทที่ส่งนิสิต — เรียงตามคะแนนแนะนำ</div><div class="card-sub" style="margin-bottom:12px">AUN-QA C6</div>
+<div style="overflow-x:auto"><table class="dtable"><thead><tr><th>#</th><th>บริษัท</th><th>นิสิต</th><th>คะแนนแนะนำ</th><th>ถูกชักชวน</th><th>ได้งานแล้ว</th></tr></thead><tbody id="comp-tbody"></tbody></table></div></div>
+`;
+  // KPI
+  const kpis=[
+    {l:"ผู้ตอบ",v:n+" คน",s:"ทั้งหมด",c:"#2563eb"},
+    {l:"CLO เฉลี่ย",v:overallCLO.toFixed(2)+"/5",s:"CLO 2–5",c:"#0d9488"},
+    {l:"แนะนำบริษัท",v:avg(rows,"recommend").toFixed(2)+"/5",s:"เฉลี่ย",c:"#d97706"},
+    {l:"สายเทคโนโลยี",v:pct(rows.filter(r=>r.future_it==="ใช่").length,n)+"%",s:"วางแผนทำงาน",c:"#7c3aed"},
+    {l:"ได้งานแล้ว",v:pct(rows.filter(r=>r.job_status==="ได้งานแล้ว").length,n)+"%",s:"สถานะปัจจุบัน",c:"#16a34a"},
+    {l:"ถูกชักชวน",v:pct(rows.filter(r=>r.invited_back==="ได้รับการชักชวน").length,n)+"%",s:"ให้สมัครต่อ",c:"#e11d48"},
+    {l:"อาจารย์นิเทศ",v:avg(rows,"advisor_care").toFixed(2)+"/5",s:"ความสม่ำเสมอ",c:"#0891b2"},
+    {l:"ความพร้อม ม.",v:univR.toFixed(2)+"/5",s:"ความรู้เพียงพอ",c:"#65a30d"},
   ];
+  document.getElementById("kpi-grid").innerHTML=kpis.map(k=>`<div class="kpi"><div class="kpi-accent" style="background:${k.c}"></div><div class="kpi-label">${k.l}</div><div class="kpi-value" style="color:${k.c}">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join("");
 
-  const content = document.getElementById('content');
-  content.innerHTML = '';
-
-  // ── KPI ──
-  const kpiDiv = document.createElement('div');
-  kpiDiv.className = 'kpi-grid';
-  kpiDiv.innerHTML = [
-    {label:'ผู้ตอบทั้งหมด', value:n+' คน', sub:'ปีการศึกษา 2568'},
-    {label:'CLO โดยรวม (เฉลี่ย)', value:overallCLO+'/5', sub:'จากคะแนน 1–5'},
-    {label:'แนะนำบริษัท (เฉลี่ย)', value:recAvg+'/5', sub:'คะแนน 1–5'},
-    {label:'ทำงานสายเทคโนโลยี', value:itPct+'%', sub:'ของผู้ตอบทั้งหมด'},
-    {label:'อาจารย์นิเทศ (เฉลี่ย)', value:advisorAvg+'/5', sub:'ความสม่ำเสมอ'},
-  ].map(k=>`<div class="kpi"><div class="kpi-label">${k.label}</div><div class="kpi-value">${k.value}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
-  content.appendChild(kpiDiv);
-
-  // ── CLO Scores ──
-  const secCLO = document.createElement('div');
-  secCLO.innerHTML = `<div class="section-title">ผลการบรรลุ CLO (เฉลี่ยจากคะแนน 1–5)</div>`;
-  const cloGrid = document.createElement('div');
-  cloGrid.className = 'clo-grid';
-  cloData.forEach(c => {
-    let scoreVal, scoreStr;
-    if (c.multi) {
-      const cc = count(rows, c.key);
-      const full = (cc['ใช่ ทำครบทั้งหมด (วิเคราะห์ + ออกแบบ + พัฒนา)']||0);
-      scoreVal = (full/n)*5;
-      scoreStr = Math.round((full/n)*100)+'% ทำครบ';
-    } else {
-      scoreVal = avg(rows, c.key);
-      scoreStr = scoreVal.toFixed(2)+'/5';
-    }
-    const pct = Math.min((scoreVal/5)*100, 100);
-    const cls = scoreVal >= 4 ? 'score-good' : scoreVal >= 3 ? 'score-mid' : 'score-low';
-    cloGrid.innerHTML += `<div class="clo-card">
-      <div class="clo-name">${c.label}</div>
-      <div class="clo-score">${scoreStr}</div>
-      <div class="clo-bar"><div class="clo-bar-fill ${cls}" style="width:${pct}%"></div></div>
-    </div>`;
-  });
-  secCLO.appendChild(cloGrid);
-  content.appendChild(secCLO);
-
-  // ── Charts ──
-  const secCharts = document.createElement('div');
-  secCharts.innerHTML = `<div class="section-title">ข้อมูลสถานประกอบการ</div>`;
-  const chartGrid = document.createElement('div');
-  chartGrid.className = 'chart-grid';
-
-  // Job type pie
-  const jobTop = topN(jobCounts, 8);
-  chartGrid.innerHTML += `<div class="chart-card">
-    <div class="chart-title">ลักษณะงานหลักที่ทำ</div>
-    <div class="chart-wrap"><canvas id="chart-job"></canvas></div>
-  </div>`;
-
-  // Salary bar
-  const salOrder = ['ไม่ได้รับ','1 – 5,000','5,001 – 10,000','10,001 – 15,000','15,001 – 20,000','20,001 – 30,000','มากกว่า 30,000'];
-  chartGrid.innerHTML += `<div class="chart-card">
-    <div class="chart-title">ค่าตอบแทนที่ได้รับ (บาท/เดือน)</div>
-    <div class="bar-list" id="sal-bars"></div>
-  </div>`;
-
-  // AI use pie
-  chartGrid.innerHTML += `<div class="chart-card">
-    <div class="chart-title">การใช้ AI Tools ในบริษัท</div>
-    <div class="chart-wrap"><canvas id="chart-ai"></canvas></div>
-  </div>`;
-
-  secCharts.appendChild(chartGrid);
-  content.appendChild(secCharts);
-
-  // Skills section
-  const secSkills = document.createElement('div');
-  secSkills.innerHTML = `<div class="section-title">ทักษะที่ใช้ในการปฏิบัติงาน</div>`;
-
-  const skillGrid = document.createElement('div');
-  skillGrid.className = 'chart-grid';
-
-  // Language bar
-  const langTop = topN(langCounts);
-  let langBars = '<div class="chart-card"><div class="chart-title">Programming Languages</div><div class="bar-list">';
-  const langMax = langTop[0]?.[1]||1;
-  langTop.forEach(([k,v]) => {
-    langBars += `<div class="bar-row"><div class="bar-label">${k}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/langMax*100)}%"></div></div><div class="bar-count">${v}</div></div>`;
-  });
-  langBars += '</div></div>';
-  skillGrid.innerHTML += langBars;
-
-  // Other skills tag cloud
-  const skillTop = topN(skillCounts, 20);
-  const maxSk = skillTop[0]?.[1]||1;
-  let tags = '<div class="chart-card"><div class="chart-title">Other Skills ที่ใช้</div><div class="tag-cloud">';
-  skillTop.forEach(([k,v]) => {
-    const size = v/maxSk >= .7 ? 'xl' : v/maxSk >= .4 ? 'lg' : '';
-    tags += `<span class="tag ${size}">${k} (${v})</span>`;
-  });
-  tags += '</div></div>';
-  skillGrid.innerHTML += tags;
-
-  secSkills.appendChild(skillGrid);
-  content.appendChild(secSkills);
-
-  // PLO weak section
-  const secPLO = document.createElement('div');
-  secPLO.innerHTML = `<div class="section-title">PLO ที่นิสิตระบุว่ายังต้องพัฒนา</div>`;
-  const ploCard = document.createElement('div');
-  ploCard.className = 'chart-card';
-  const ploTop = topN(ploCounts);
-  const ploMax = ploTop[0]?.[1]||1;
-  let ploBars = '<div class="bar-list">';
-  ploTop.forEach(([k,v]) => {
-    ploBars += `<div class="bar-row"><div class="bar-label">${k}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/ploMax*100)}%"></div></div><div class="bar-count">${v}</div></div>`;
-  });
-  ploBars += '</div>';
-  ploCard.innerHTML = ploBars;
-  secPLO.appendChild(ploCard);
-  content.appendChild(secPLO);
-
-  // ── Render Charts ──
-  setTimeout(() => {
-    // Job type doughnut
-    const jobEl = document.getElementById('chart-job');
-    if (jobEl) new Chart(jobEl, {
-      type: 'doughnut',
-      data: {
-        labels: jobTop.map(j=>j[0]),
-        datasets: [{ data: jobTop.map(j=>j[1]),
-          backgroundColor: ['#2563eb','#0891b2','#16a34a','#d97706','#dc2626','#7c3aed','#db2777','#64748b'],
-          borderWidth: 2, borderColor: '#fff' }]
-      },
-      options: { plugins: { legend: { position:'right', labels:{ font:{size:11}, boxWidth:12 } } }, cutout:'60%' }
+  setTimeout(()=>{
+    // CLO list
+    const cloItems=[
+      {k:"clo1",l:"CLO 1",d:"วิเคราะห์ ออกแบบ พัฒนาระบบ",multi:true},
+      {k:"clo2",l:"CLO 2",d:"เลือกใช้เทคโนโลยีที่เหมาะสม"},
+      {k:"clo3",l:"CLO 3",d:"พัฒนางาน IT ให้หน่วยงาน"},
+      {k:"clo4",l:"CLO 4",d:"ความรับผิดชอบ/ประสิทธิภาพ"},
+      {k:"clo5",l:"CLO 5",d:"จรรยาบรรณ/ทำงานร่วม"},
+    ];
+    const cloScores=cloItems.map(c=>{
+      if(c.multi){const cc=cnt(rows,c.k);return((cc["ใช่ ทำครบทั้งหมด (วิเคราะห์ + ออกแบบ + พัฒนา)"]||0)/n)*5;}
+      return avg(rows,c.k);
     });
+    document.getElementById("clo-list").innerHTML=cloItems.map((c,i)=>{
+      const s=cloScores[i],p=Math.min(s/5*100,100);
+      const str=c.multi?Math.round(s/5*100)+"%ทำครบ":s.toFixed(2)+"/5";
+      return`<div class="clo-item"><div class="clo-name">${c.l} — ${c.d}</div><div class="clo-bar-wrap"><div class="clo-bg"><div class="clo-fill" style="width:${p}%;background:${sc(s)}"></div></div><div class="clo-score" style="color:${sc(s)}">${str}</div></div></div>`;
+    }).join("");
+
+    // Radar
+    ch.radar=new Chart(document.getElementById("radar"),{type:"radar",data:{labels:cloItems.map(c=>c.l),datasets:[{label:"คะแนน",data:cloScores,backgroundColor:"rgba(37,99,235,.12)",borderColor:"#2563eb",borderWidth:2,pointBackgroundColor:"#2563eb",pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,scales:{r:{min:0,max:5,ticks:{stepSize:1,font:{size:10}},pointLabels:{font:{size:12,family:"Sarabun"}}}},plugins:{legend:{display:false}}}});
+
+    // PLO bars
+    const plo=topN(cnt(rows,"plo_weak"),7),ploM=plo[0]?.[1]||1;
+    document.getElementById("plo-bars").innerHTML=plo.map(([k,v])=>`<div class="bar-row"><div class="bar-label">${k}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/ploM*100)}%;background:#7c3aed"><span>${v}</span></div></div></div>`).join("");
+
+    // CLO1 pie
+    const c1=cnt(rows,"clo1");
+    const c1d=topN(c1);
+    mkPie("clo1-pie",null,c1d,["#16a34a","#d97706","#e11d48"]);
+
+    // Job pie
+    mkPie("job-pie","job-leg",topN(cnt(rows,"job_type"),6),C);
+
+    // Bars
+    mkBars("lang-bars",cnt(rows,"lang"),"#2563eb",8);
+    mkBars("db-bars",cnt(rows,"db"),"#0d9488",6);
+    mkBars("fw-bars",cnt(rows,"framework"),"#7c3aed",6);
+
+    // Skill cloud
+    const sk=topN(cnt(rows,"other_skills"),20),skM=sk[0]?.[1]||1;
+    document.getElementById("skill-cloud").innerHTML=sk.map(([k,v])=>`<span class="tag ${v/skM>=.7?"xl":v/skM>=.4?"lg":""}">${k}(${v})</span>`).join("");
+
+    // Training bars
+    mkBars("train-bars",cnt(rows,"training_type"),"#0891b2",7);
+
+    // Ready dist
+    const rd=[1,2,3,4,5].map(x=>rows.filter(r=>+r.univ_ready===x).length);
+    ch["ready-bar"]=new Chart(document.getElementById("ready-bar"),{type:"bar",data:{labels:["1","2","3","4","5"],datasets:[{data:rd,backgroundColor:["#fee2e2","#fef3c7","#fef9c3","#d1fae5","#a7f3d0"],borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
+
+    // AI / Privacy pies
+    mkPie("ai-pie","ai-leg",topN(cnt(rows,"ai_use")),["#16a34a","#d97706","#64748b","#e11d48"]);
+    mkPie("priv-pie","priv-leg",topN(cnt(rows,"data_privacy")),["#2563eb","#d97706","#64748b"]);
 
     // Salary bars
-    const salDiv = document.getElementById('sal-bars');
-    if (salDiv) {
-      const salMax = Math.max(...salOrder.map(k=>salCounts[k]||0), 1);
-      salDiv.innerHTML = salOrder.map(k => {
-        const v = salCounts[k]||0;
-        return `<div class="bar-row"><div class="bar-label">${k}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/salMax*100)}%"></div></div><div class="bar-count">${v}</div></div>`;
-      }).join('');
-    }
+    const salO=["ไม่ได้รับ","1 – 5,000","5,001 – 10,000","10,001 – 15,000","15,001 – 20,000","20,001 – 30,000","มากกว่า 30,000"];
+    const salC=cnt(rows,"salary"),salM=Math.max(...salO.map(k=>salC[k]||0),1);
+    document.getElementById("salary-bars").innerHTML=salO.map(k=>`<div class="bar-row"><div class="bar-label">${k}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round((salC[k]||0)/salM*100)}%;background:#0d9488"><span>${salC[k]||0}</span></div></div></div>`).join("");
 
-    // AI use doughnut
-    const aiEl = document.getElementById('chart-ai');
-    if (aiEl) {
-      const aiTop = topN(aiCounts);
-      new Chart(aiEl, {
-        type: 'doughnut',
-        data: {
-          labels: aiTop.map(a=>a[0]),
-          datasets: [{ data: aiTop.map(a=>a[1]),
-            backgroundColor: ['#16a34a','#f59e0b','#6b7280','#dc2626'],
-            borderWidth: 2, borderColor: '#fff' }]
-        },
-        options: { plugins: { legend: { position:'right', labels:{ font:{size:11}, boxWidth:12 } } }, cutout:'60%' }
-      });
-    }
-  }, 100);
+    // Job status pie
+    mkPie("js-pie","js-leg",topN(cnt(rows,"job_status")),["#16a34a","#d97706","#64748b"]);
+
+    // Advisor cards & scores
+    const advC=cnt(rows,"advisor");
+    document.getElementById("adv-cards").innerHTML=Object.entries(advC).sort((a,b)=>b[1]-a[1]).map(([a,c])=>`<div class="adv-card"><div class="adv-name">${a}</div><div class="adv-n">${c}</div><div class="adv-sub">นิสิต</div></div>`).join("");
+    const advs=[...new Set(rows.map(r=>r.advisor).filter(Boolean))];
+    const advSc=advs.map(a=>{const ar=rows.filter(r=>r.advisor===a);return{name:a,v:avg(ar,"advisor_care"),n:ar.length};}).sort((a,b)=>b.v-a.v);
+    document.getElementById("adv-scores").innerHTML=advSc.map(a=>`<div class="bar-row"><div class="bar-label">${a.name}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(a.v/5*100)}%;background:${sc(a.v)}"><span>${a.v.toFixed(1)}</span></div></div><div style="font-size:11px;color:var(--muted);min-width:30px;text-align:right">${a.n}คน</div></div>`).join("");
+
+    // Company table
+    const comps=[...new Set(rows.map(r=>r.company).filter(Boolean))];
+    document.getElementById("comp-tbody").innerHTML=comps.map(c=>{
+      const cr=rows.filter(r=>r.company===c);
+      const rec=avg(cr,"recommend");
+      return{name:c,n:cr.length,rec,inv:pct(cr.filter(r=>r.invited_back==="ได้รับการชักชวน").length,cr.length),job:pct(cr.filter(r=>r.job_status==="ได้งานแล้ว").length,cr.length)};
+    }).sort((a,b)=>b.rec-a.rec).map((c,i)=>`<tr><td>${i+1}</td><td style="font-weight:500">${c.name}</td><td>${c.n}</td><td><span class="sbadge ${scl(c.rec)}">${c.rec.toFixed(1)}</span></td><td>${c.inv}%</td><td>${c.job}%</td></tr>`).join("");
+  },50);
 }
-
+function mkPie(cid,lid,data,colors){
+  dc(cid);
+  const el=document.getElementById(cid);if(!el)return;
+  ch[cid]=new Chart(el,{type:"doughnut",data:{labels:data.map(d=>d[0]),datasets:[{data:data.map(d=>d[1]),backgroundColor:colors.slice(0,data.length),borderWidth:2,borderColor:"#fff"}]},options:{responsive:true,maintainAspectRatio:false,cutout:"65%",plugins:{legend:{display:false}}}});
+  if(lid){const l=document.getElementById(lid);if(l)l.innerHTML=data.map(([k,v],i)=>`<div class="pie-leg"><div class="pie-dot" style="background:${colors[i%colors.length]}"></div><span>${k} <strong>(${v})</strong></span></div>`).join("");}
+}
+function mkBars(eid,obj,color,max){
+  const top=topN(obj,max),mx=top[0]?.[1]||1;
+  const el=document.getElementById(eid);if(!el)return;
+  el.innerHTML=top.map(([k,v])=>`<div class="bar-row"><div class="bar-label">${k}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/mx*100)}%;background:${color}"><span>${v}</span></div></div></div>`).join("");
+}
 loadData();
 </script>
 </body>
