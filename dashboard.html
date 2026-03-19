@@ -63,7 +63,7 @@ select{padding:4px 10px;border:1px solid var(--border);border-radius:8px;font-fa
 .pie-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .advisor-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
 .adv-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
-.adv-name{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.adv-name{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px;text-decoration:none}
 .adv-n{font-size:24px;font-weight:700;color:var(--blue)}
 .adv-sub{font-size:11px;color:var(--muted)}
 .dtable{width:100%;border-collapse:collapse;font-size:13px}
@@ -92,7 +92,7 @@ select{padding:4px 10px;border:1px solid var(--border);border-radius:8px;font-fa
   <div class="filter-inner">
     <label>กรอง:</label>
     <select id="fy" onchange="applyFilter()"><option value="">ทุกปีการศึกษา</option></select>
-    <select id="fp" onchange="applyFilter()"><option value="">ทุกแผน</option><option>ปกติ</option><option>ภาคพิเศษ</option></select>
+    <select id="fp" onchange="applyFilter()"><option value="">ทุกแผน</option></select>
     <select id="fa" onchange="applyFilter()"><option value="">ทุกอาจารย์</option></select>
     <span class="filter-count" id="fc"></span>
   </div>
@@ -113,26 +113,40 @@ function scl(v){return v>=4?"sh":v>=3?"sm":"sl";}
 function dc(id){if(ch[id]){ch[id].destroy();delete ch[id];}}
 async function loadData(){
   document.getElementById("ri").classList.add("spin");
+  document.getElementById("main").innerHTML="<div class=\"loading\"><div class=\"spin-lg\"></div><div>กำลังโหลดข้อมูล...</div></div>";
   try{
-    const r=await fetch(SCRIPT_URL+"?action=getData");
-    all=await r.json();
+    const r=await fetch(SCRIPT_URL+"?action=getData",{redirect:"follow"});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    const text=await r.text();
+    try{all=JSON.parse(text);
+    all=all.map(r=>{const n={};Object.keys(r).forEach(k=>{const v=r[k];n[k]=Array.isArray(v)?v:(v!==null&&v!==undefined&&String(v)!=="undefined")?String(v):"";});return n;});}catch(pe){throw new Error("JSON parse error: "+text.substring(0,100));}
     if(!Array.isArray(all))all=[];
+    if(all.length===0){
+      document.getElementById("main").innerHTML="<div class=\"loading\">ยังไม่มีข้อมูลในระบบ<br><small style=\"color:#94a3b8;font-size:12px\">กรุณาให้นิสิตกรอกแบบสอบถามก่อน</small></div>";
+      document.getElementById("ri").classList.remove("spin");
+      return;
+    }
     buildFilters();applyFilter();
-  }catch(e){document.getElementById("main").innerHTML="<div class=\"loading\">โหลดข้อมูลไม่สำเร็จ กรุณาตรวจสอบ SCRIPT_URL</div>";}
+  }catch(e){
+    document.getElementById("main").innerHTML="<div class=\"loading\">โหลดข้อมูลไม่สำเร็จ<br><small style=\"color:#94a3b8;font-size:12px\">"+e.message+"</small><br><br><button onclick=\"loadData()\" style=\"padding:8px 20px;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;font-family:inherit\">ลองใหม่</button></div>";
+  }
   document.getElementById("ri").classList.remove("spin");
 }
 function buildFilters(){
-  const years=[...new Set(all.map(r=>r.academic_year).filter(Boolean))].sort();
+  const years=[...new Set(all.map(r=>String(r.academic_year)).filter(Boolean))].sort();
   const fy=document.getElementById("fy");
   years.forEach(y=>{const o=document.createElement("option");o.value=y;o.textContent="ปีการศึกษา "+y;fy.appendChild(o);});
   if(years.length===1)fy.value=years[0];
-  const advs=[...new Set(all.map(r=>r.advisor).filter(Boolean))].sort();
+  const progs=[...new Set(all.map(r=>String(r.program)).filter(v=>v&&v!==""))].sort();
+  const fpp=document.getElementById("fp");
+  progs.forEach(p=>{const o=document.createElement("option");o.value=p;o.textContent=p;fpp.appendChild(o);});
+  const advs=[...new Set(all.map(r=>String(r.advisor)).filter(Boolean))].sort();
   const fa=document.getElementById("fa");
   advs.forEach(a=>{const o=document.createElement("option");o.value=a;o.textContent=a;fa.appendChild(o);});
 }
 function applyFilter(){
   const y=document.getElementById("fy").value,p=document.getElementById("fp").value,a=document.getElementById("fa").value;
-  filtered=all.filter(r=>(!y||r.academic_year===y)&&(!p||r.program===p)&&(!a||r.advisor===a));
+  filtered=all.filter(r=>(!y||String(r.academic_year)===String(y))&&(!p||String(r.program)===String(p))&&(!a||String(r.advisor)===String(a)));
   document.getElementById("fc").textContent=filtered.length+" รายการ";
   render(filtered);
 }
@@ -266,10 +280,18 @@ function render(rows){
 
     // Advisor cards & scores
     const advC=cnt(rows,"advisor");
-    document.getElementById("adv-cards").innerHTML=Object.entries(advC).sort((a,b)=>b[1]-a[1]).map(([a,c])=>`<div class="adv-card"><div class="adv-name">${a}</div><div class="adv-n">${c}</div><div class="adv-sub">นิสิต</div></div>`).join("");
-    const advs=[...new Set(rows.map(r=>r.advisor).filter(Boolean))];
-    const advSc=advs.map(a=>{const ar=rows.filter(r=>r.advisor===a);return{name:a,v:avg(ar,"advisor_care"),n:ar.length};}).sort((a,b)=>b.v-a.v);
-    document.getElementById("adv-scores").innerHTML=advSc.map(a=>`<div class="bar-row"><div class="bar-label">${a.name}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(a.v/5*100)}%;background:${sc(a.v)}"><span>${a.v.toFixed(1)}</span></div></div><div style="font-size:11px;color:var(--muted);min-width:30px;text-align:right">${a.n}คน</div></div>`).join("");
+    document.getElementById("adv-cards").innerHTML="";
+    Object.entries(advC).filter(([a])=>a&&a!=="undefined").sort((a,b)=>b[1]-a[1]).forEach(([a,c])=>{
+      const d=document.createElement("div");d.className="adv-card";
+      const nm=document.createElement("div");nm.className="adv-name";nm.textContent=a;
+      const n=document.createElement("div");n.className="adv-n";n.textContent=c;
+      const s=document.createElement("div");s.className="adv-sub";s.textContent="นิสิต";
+      d.appendChild(nm);d.appendChild(n);d.appendChild(s);
+      document.getElementById("adv-cards").appendChild(d);
+    });
+    const advs=[...new Set(rows.map(r=>String(r.advisor||"")).filter(v=>v&&v!=="undefined"))];
+    const advSc=advs.map(a=>{const ar=rows.filter(r=>String(r.advisor||"")===String(a));const v=avg(ar,"advisor_care");return{name:a,v:isNaN(v)?0:v,n:ar.length};}).filter(a=>a.name&&a.name!=="undefined").sort((a,b)=>b.v-a.v);
+    document.getElementById("adv-scores").innerHTML=advSc.map(a=>`<div class="bar-row"><div class="bar-label">${a.name}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(a.v/5*100)}%;background:${sc(a.v)}"><span>${(+a.v||0).toFixed(1)}</span></div></div><div style="font-size:11px;color:var(--muted);min-width:30px;text-align:right">${a.n}คน</div></div>`).join("");
 
     // Company table
     const comps=[...new Set(rows.map(r=>r.company).filter(Boolean))];
