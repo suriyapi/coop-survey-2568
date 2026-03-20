@@ -283,7 +283,8 @@ async function sub(){
   const btn=document.getElementById('btn-sub');
   btn.classList.add('sending');btn.disabled=true;
   try{
-    await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({...ans,academic_year:CONFIG.academic_year,semester:CONFIG.semester,submitted_at:new Date().toISOString()})});
+    const res=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({...ans,academic_year:CONFIG.academic_year,semester:CONFIG.semester,submitted_at:new Date().toISOString()})});
+    if(!res.ok)throw new Error('HTTP '+res.status);
     document.getElementById('form-container').innerHTML=`<div class="success-wrap"><div class="success-icon">✓</div><div class="success-title">ขอบคุณที่ตอบแบบสอบถาม!</div><div class="success-sub">ข้อมูลของท่านถูกบันทึกเรียบร้อยแล้ว<br>ข้อมูลจะถูกนำไปใช้พัฒนาหลักสูตรและประกอบการทำ SAR / AUN-QA</div></div>`;
     document.getElementById('prog').style.width='100%';
     document.getElementById('prog-label').textContent='100%';
