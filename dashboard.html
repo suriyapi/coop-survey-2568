@@ -224,6 +224,9 @@ function render(rows){
   <div class="card"><div class="card-title">Frameworks / Libraries</div><div class="card-sub">Top 6</div><div class="bar-list" id="fw-bars"></div></div>
   <div class="card"><div class="card-title">Other Skills</div><div class="card-sub">ขนาด = ความถี่</div><div class="tag-cloud" id="skill-cloud"></div></div>
 </div>
+<div class="chart-grid-3" style="margin-top:16px">
+  <div class="card"><div class="card-title">Software / Tools</div><div class="card-sub">Top 8 ที่ใช้จริงในองค์กร — CLO 2, PLO1</div><div class="bar-list" id="tools-bars"></div></div>
+</div>
 <div class="sec-label">การเรียนรู้และหลักสูตร — AUN-QA C3</div>
 <div class="chart-grid">
   <div class="card"><div class="card-title">รูปแบบ Training ที่บริษัทจัดให้</div><div class="card-sub"></div><div class="bar-list" id="train-bars"></div></div>
@@ -299,6 +302,9 @@ function render(rows){
     mkBars("lang-bars",cnt(rows,"lang"),"#2563eb",8);
     mkBars("db-bars",cnt(rows,"db"),"#0d9488",6);
     mkBars("fw-bars",cnt(rows,"framework"),"#7c3aed",6);
+
+    // Tools bars
+    mkBars("tools-bars",cnt(rows,"tools"),"#0891b2",8);
 
     // Skill cloud
     const sk=topN(cnt(rows,"other_skills"),20),skM=sk[0]?.[1]||1;
