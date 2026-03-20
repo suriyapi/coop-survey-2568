@@ -111,6 +111,8 @@ function pct(a,b){return b?Math.round(a/b*100):0;}
 function sc(v){return v>=4?"#16a34a":v>=3?"#d97706":"#e11d48";}
 function scl(v){return v>=4?"sh":v>=3?"sm":"sl";}
 function dc(id){if(ch[id]){ch[id].destroy();delete ch[id];}}
+const clo1Map={"ใช่ ทำครบทั้งหมด (วิเคราะห์ + ออกแบบ + พัฒนา)":5,"ทำบางส่วน":3,"ไม่ได้ทำ":1};
+function avgClo1(rows){const vals=rows.map(r=>clo1Map[r.clo1]).filter(v=>v!==undefined);return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;}
 async function loadData(){
   try{
     const cr=await fetch(SCRIPT_URL+"?action=getConfig",{redirect:"follow"});
@@ -166,7 +168,7 @@ function render(rows){
   if(!rows||rows.length===0){document.getElementById("main").innerHTML="<div class=\"loading\">ยังไม่มีข้อมูล</div>";return;}
   Object.keys(ch).forEach(k=>{ch[k].destroy();delete ch[k];});
   const n=rows.length;
-  const overallCLO=((avg(rows,"clo2")+avg(rows,"clo3")+avg(rows,"clo4")+avg(rows,"clo5"))/4);
+  const overallCLO=((avgClo1(rows)+avg(rows,"clo2")+avg(rows,"clo3")+avg(rows,"clo4")+avg(rows,"clo5"))/5);
   const univR=avg(rows,"univ_ready");
   const main=document.getElementById("main");
   main.innerHTML=`
@@ -218,7 +220,7 @@ function render(rows){
   // KPI
   const kpis=[
     {l:"ผู้ตอบ",v:n+" คน",s:"ทั้งหมด",c:"#2563eb"},
-    {l:"CLO เฉลี่ย",v:overallCLO.toFixed(2)+"/5",s:"CLO 2–5",c:"#0d9488"},
+    {l:"CLO เฉลี่ย",v:overallCLO.toFixed(2)+"/5",s:"CLO 1–5",c:"#0d9488"},
     {l:"แนะนำบริษัท",v:avg(rows,"recommend").toFixed(2)+"/5",s:"เฉลี่ย",c:"#d97706"},
     {l:"สายเทคโนโลยี",v:pct(rows.filter(r=>r.future_it==="ใช่").length,n)+"%",s:"วางแผนทำงาน",c:"#7c3aed"},
     {l:"ได้งานแล้ว",v:pct(rows.filter(r=>r.job_status==="ได้งานแล้ว").length,n)+"%",s:"สถานะปัจจุบัน",c:"#16a34a"},
@@ -237,9 +239,8 @@ function render(rows){
       {k:"clo4",l:"CLO 4",d:"ความรับผิดชอบ/ประสิทธิภาพ"},
       {k:"clo5",l:"CLO 5",d:"จรรยาบรรณ/ทำงานร่วม"},
     ];
-    const clo1Map={"ใช่ ทำครบทั้งหมด (วิเคราะห์ + ออกแบบ + พัฒนา)":5,"ทำบางส่วน":3,"ไม่ได้ทำ":1};
     const cloScores=cloItems.map(c=>{
-      if(c.multi){const vals=rows.map(r=>clo1Map[r[c.k]]).filter(v=>v!==undefined);return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;}
+      if(c.multi){return avgClo1(rows);}
       return avg(rows,c.k);
     });
     document.getElementById("clo-list").innerHTML=cloItems.map((c,i)=>{
