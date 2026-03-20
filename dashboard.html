@@ -237,13 +237,14 @@ function render(rows){
       {k:"clo4",l:"CLO 4",d:"ความรับผิดชอบ/ประสิทธิภาพ"},
       {k:"clo5",l:"CLO 5",d:"จรรยาบรรณ/ทำงานร่วม"},
     ];
+    const clo1Map={"ใช่ ทำครบทั้งหมด (วิเคราะห์ + ออกแบบ + พัฒนา)":5,"ทำบางส่วน":3,"ไม่ได้ทำ":1};
     const cloScores=cloItems.map(c=>{
-      if(c.multi){const cc=cnt(rows,c.k);return((cc["ใช่ ทำครบทั้งหมด (วิเคราะห์ + ออกแบบ + พัฒนา)"]||0)/n)*5;}
+      if(c.multi){const vals=rows.map(r=>clo1Map[r[c.k]]).filter(v=>v!==undefined);return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;}
       return avg(rows,c.k);
     });
     document.getElementById("clo-list").innerHTML=cloItems.map((c,i)=>{
       const s=cloScores[i],p=Math.min(s/5*100,100);
-      const str=c.multi?Math.round(s/5*100)+"%ทำครบ":s.toFixed(2)+"/5";
+      const str=s.toFixed(2)+"/5";
       return`<div class="clo-item"><div class="clo-name">${c.l} — ${c.d}</div><div class="clo-bar-wrap"><div class="clo-bg"><div class="clo-fill" style="width:${p}%;background:${sc(s)}"></div></div><div class="clo-score" style="color:${sc(s)}">${str}</div></div></div>`;
     }).join("");
 
