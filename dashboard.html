@@ -219,6 +219,10 @@ function render(rows){
   <div class="card"><div class="card-title">ลักษณะงานหลักที่ทำ</div><div class="card-sub"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center"><div class="chart-sm"><canvas id="job-pie"></canvas></div><div class="pie-legend" id="job-leg"></div></div></div>
   <div class="card"><div class="card-title">Programming Languages</div><div class="card-sub">Top 8 ที่ใช้จริงในองค์กร</div><div class="bar-list" id="lang-bars"></div></div>
 </div>
+<div class="chart-grid" style="margin-top:16px">
+  <div class="card"><div class="card-title">งานที่ได้รับต้องเขียนโปรแกรมหรือไม่</div><div class="card-sub">CLO 1, 2 — PLO1, PLO3</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center"><div class="chart-sm"><canvas id="coding-pie"></canvas></div><div class="pie-legend" id="coding-leg"></div></div></div>
+  <div class="card"><div class="card-title">ผลงานถูกนำไปใช้จริงในองค์กรหรือไม่</div><div class="card-sub">CLO 3 — วัดผลลัพธ์ที่แท้จริง</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center"><div class="chart-sm"><canvas id="work-used-pie"></canvas></div><div class="pie-legend" id="work-used-leg"></div></div></div>
+</div>
 <div class="chart-grid-3" style="margin-top:16px">
   <div class="card"><div class="card-title">Database / DBMS</div><div class="card-sub">Top 6</div><div class="bar-list" id="db-bars"></div></div>
   <div class="card"><div class="card-title">Frameworks / Libraries</div><div class="card-sub">Top 6</div><div class="bar-list" id="fw-bars"></div></div>
@@ -294,6 +298,12 @@ function render(rows){
 
     // Job pie
     mkPie("job-pie","job-leg",topN(cnt(rows,"job_type"),6),C);
+
+    // need_coding pie
+    mkPie("coding-pie","coding-leg",topN(cnt(rows,"need_coding")),["#2563eb","#94a3b8"]);
+
+    // work_used pie
+    mkPie("work-used-pie","work-used-leg",topN(cnt(rows,"work_used")),["#16a34a","#d97706","#94a3b8","#e11d48"]);
 
     // Bars
     mkBars("lang-bars",cnt(rows,"lang"),"#2563eb",8);
