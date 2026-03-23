@@ -89,6 +89,7 @@ select{padding:4px 10px;border:1px solid var(--border);border-radius:8px;font-fa
 .auth-err.show{display:block}
 .auth-logout-btn{margin-top:12px;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:8px;color:rgba(255,255,255,.7);padding:6px 16px;font-family:inherit;font-size:13px;cursor:pointer}
 .auth-logout-btn:hover{background:rgba(255,255,255,.08)}
+.quote{font-size:13px;color:var(--text);padding:8px 12px;border-left:3px solid var(--blue);background:#f8fafc;border-radius:0 8px 8px 0;line-height:1.6}
 .logout-btn{background:transparent;border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#fff;padding:5px 12px;font-family:inherit;font-size:13px;cursor:pointer}
 .logout-btn:hover{background:rgba(255,255,255,.1)}
 </style>
@@ -232,6 +233,13 @@ function render(rows){
   <div class="card"><div class="card-title">รูปแบบ Training ที่บริษัทจัดให้</div><div class="card-sub"></div><div class="bar-list" id="train-bars"></div></div>
   <div class="card"><div class="card-title">ความเพียงพอของความรู้จาก ม. (${univR.toFixed(2)}/5)</div><div class="card-sub">การกระจายคะแนน 1–5</div><div class="chart-sm"><canvas id="ready-bar"></canvas></div></div>
 </div>
+<div class="chart-grid" style="margin-top:16px">
+  <div class="card"><div class="card-title">วิชาที่มีประโยชน์มากที่สุดระหว่างสหกิจ</div><div class="card-sub">AUN-QA C3 — ใช้ยืนยันวิชาที่ควรคงไว้</div><div class="tag-cloud" id="subject-cloud" style="margin-top:8px"></div></div>
+  <div class="card"><div class="card-title">คำแนะนำต่อหลักสูตร</div><div class="card-sub">AUN-QA C3 — ข้อเสนอแนะปรับวิชา</div><div id="curriculum-quotes" style="margin-top:8px;display:flex;flex-direction:column;gap:8px;max-height:220px;overflow-y:auto"></div></div>
+</div>
+<div class="chart-grid" style="margin-top:16px">
+  <div class="card" style="grid-column:1/-1"><div class="card-title">คำแนะนำสำหรับรุ่นน้องในการเตรียมตัว</div><div class="card-sub">AUN-QA C6 — ประสบการณ์จริงจากรุ่นพี่</div><div id="junior-quotes" style="margin-top:8px;display:flex;flex-direction:column;gap:8px;max-height:220px;overflow-y:auto"></div></div>
+</div>
 <div class="sec-label">จริยธรรมและ AI — PLO5, AUN-QA C1</div>
 <div class="chart-grid">
   <div class="card"><div class="card-title">การใช้ AI Tools ในองค์กร</div><div class="card-sub"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center"><div class="chart-sm"><canvas id="ai-pie"></canvas></div><div class="pie-legend" id="ai-leg"></div></div></div>
@@ -316,6 +324,24 @@ function render(rows){
     // Ready dist
     const rd=[1,2,3,4,5].map(x=>rows.filter(r=>+r.univ_ready===x).length);
     ch["ready-bar"]=new Chart(document.getElementById("ready-bar"),{type:"bar",data:{labels:["1","2","3","4","5"],datasets:[{data:rd,backgroundColor:["#fee2e2","#fef3c7","#fef9c3","#d1fae5","#a7f3d0"],borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
+
+    // useful_subject tag cloud
+    const subj=rows.map(r=>String(r.useful_subject||"").trim()).filter(v=>v&&v.length>1);
+    const subjC={};subj.forEach(v=>{subjC[v]=(subjC[v]||0)+1;});
+    const subjTop=Object.entries(subjC).sort((a,b)=>b[1]-a[1]).slice(0,20);
+    const subjM=subjTop[0]?.[1]||1;
+    const subjectEl=document.getElementById("subject-cloud");
+    if(subjectEl)subjectEl.innerHTML=subjTop.map(([k,v])=>`<span class="tag ${v/subjM>=.7?"xl":v/subjM>=.4?"lg":""}">${k}${v>1?" ("+v+")":""}</span>`).join("") || "<span style='color:var(--muted);font-size:13px'>ยังไม่มีข้อมูล</span>";
+
+    // advice_curriculum quotes
+    const curQuotes=rows.map(r=>String(r.advice_curriculum||"").trim()).filter(v=>v&&v.length>2);
+    const currEl=document.getElementById("curriculum-quotes");
+    if(currEl)currEl.innerHTML=curQuotes.map(q=>`<div class="quote">${q}</div>`).join("") || "<span style='color:var(--muted);font-size:13px'>ยังไม่มีข้อมูล</span>";
+
+    // advice_junior quotes
+    const junQuotes=rows.map(r=>String(r.advice_junior||"").trim()).filter(v=>v&&v.length>2);
+    const junEl=document.getElementById("junior-quotes");
+    if(junEl)junEl.innerHTML=junQuotes.map(q=>`<div class="quote">${q}</div>`).join("") || "<span style='color:var(--muted);font-size:13px'>ยังไม่มีข้อมูล</span>";
 
     // AI / Privacy pies
     mkPie("ai-pie","ai-leg",topN(cnt(rows,"ai_use")),["#16a34a","#d97706","#64748b","#e11d48"]);
