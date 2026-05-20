@@ -111,6 +111,11 @@ select{padding:4px 10px;border:1px solid var(--border);border-radius:8px;font-fa
 .auth-logout-btn:hover{background:rgba(255,255,255,.08)}
 .logout-btn{background:transparent;border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#fff;padding:5px 12px;font-family:inherit;font-size:13px;cursor:pointer}
 .logout-btn:hover{background:rgba(255,255,255,.1)}
+.tab-bar{background:#fff;border-bottom:2px solid var(--border)}
+.tab-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;gap:0}
+.tab-btn{padding:12px 22px;border:none;background:transparent;font-family:inherit;font-size:14px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab-btn:hover{color:var(--blue)}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
 </style>
 </head>
 <body>
@@ -132,7 +137,7 @@ select{padding:4px 10px;border:1px solid var(--border);border-radius:8px;font-fa
 <div class="header">
   <div class="header-inner">
     <div>
-      <h1>รายงานผลสหกิจศึกษา</h1>
+      <h1 id="dash-title">รายงานผลสหกิจศึกษา</h1>
       <p>สาขาวิชาเทคโนโลยีสารสนเทศและการสื่อสาร · <span id="year-badge" style="opacity:.8"></span></p>
     </div>
     <div class="header-right">
@@ -142,6 +147,12 @@ select{padding:4px 10px;border:1px solid var(--border);border-radius:8px;font-fa
         <button class="refresh-btn" onclick="logout()">⎋ ออก</button>
       </div>
     </div>
+  </div>
+</div>
+<div class="tab-bar">
+  <div class="tab-inner">
+    <button class="tab-btn active" id="tab-coop" onclick="switchTab('coop')">🏢 สหกิจศึกษา</button>
+    <button class="tab-btn" id="tab-special" onclick="switchTab('special')">📋 ปัญหาพิเศษ</button>
   </div>
 </div>
 <div class="filter-bar">
@@ -159,7 +170,17 @@ select{padding:4px 10px;border:1px solid var(--border);border-radius:8px;font-fa
 <script>
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbx-E1JmP4nAeI20vUYeeamIJN9FBdmuE-6uCLP9M8K6dbFRei7Tc2JTRh_W5x_U8V-M/exec";
 const C=["#2563eb","#0d9488","#d97706","#e11d48","#7c3aed","#0891b2","#65a30d","#db2777","#16a34a","#0f766e"];
-let all=[],filtered=[],ch={};
+let all=[],filtered=[],ch={},activeTab='coop';
+function switchTab(tab){
+  activeTab=tab;
+  document.getElementById('tab-coop').classList.toggle('active',tab==='coop');
+  document.getElementById('tab-special').classList.toggle('active',tab==='special');
+  const t=tab==='special'?'รายงานผลปัญหาพิเศษ':'รายงานผลสหกิจศึกษา';
+  document.getElementById('dash-title').textContent=t;
+  all=[];filtered=[];
+  ['fy','fp','fa'].forEach(id=>{const s=document.getElementById(id);while(s.options.length>1)s.remove(1);});
+  loadData();
+}
 function cnt(rows,f){const c={};rows.forEach(r=>{const v=r[f];if(!v)return;if(Array.isArray(v))v.forEach(x=>{c[x]=(c[x]||0)+1;});else c[String(v)]=(c[String(v)]||0)+1;});return c;}
 function avg(rows,f){const v=rows.map(r=>+r[f]).filter(v=>v>=1&&v<=5);return v.length?v.reduce((a,b)=>a+b,0)/v.length:0;}
 function topN(o,n=8){return Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,n);}
@@ -190,7 +211,7 @@ async function loadData(){
   
   document.getElementById("main").innerHTML="<div class=\"loading\"><div class=\"spin-lg\"></div><div>กำลังโหลดข้อมูล...</div></div>";
   try{
-    const r=await fetch(SCRIPT_URL+"?action=getData",{redirect:"follow"});
+    const r=await fetch(SCRIPT_URL+"?action=getData"+(activeTab==='special'?'&type=special':''),{redirect:"follow"});
     if(!r.ok)throw new Error("HTTP "+r.status);
     const text=await r.text();
     try{all=JSON.parse(text);
@@ -223,7 +244,8 @@ function applyFilter(){
   const y=document.getElementById("fy").value,p=document.getElementById("fp").value,a=document.getElementById("fa").value;
   filtered=all.filter(r=>(!y||String(r.academic_year)===String(y))&&(!p||String(r.program)===String(p))&&(!a||String(r.advisor)===String(a)));
   document.getElementById("fc").textContent=filtered.length+" รายการ";
-  render(filtered);
+  if(activeTab==='special') renderSpecial(filtered);
+  else render(filtered);
 }
 function render(rows){
   if(!rows||rows.length===0){document.getElementById("main").innerHTML="<div class=\"loading\">ยังไม่มีข้อมูล</div>";return;}
@@ -524,6 +546,123 @@ function render(rows){
     // Set default sort indicator
     const defTh=document.querySelector(".dtable .sortable.desc");
     if(defTh){const si=defTh.querySelector(".si");if(si)si.innerHTML="<span style='color:#2563eb'>▼</span>";}
+  },50);
+}
+function renderSpecial(rows){
+  if(!rows||rows.length===0){document.getElementById("main").innerHTML="<div class=\"loading\">ยังไม่มีข้อมูล</div>";return;}
+  Object.keys(ch).forEach(k=>{ch[k].destroy();delete ch[k];});
+  const n=rows.length;
+  const overallCLO=((avgClo1(rows)+avg(rows,"clo2")+avg(rows,"clo3")+avg(rows,"clo4")+avg(rows,"clo5"))/5);
+  const avgSat=avg(rows,"project_satisfaction");
+  const empR=pct(rows.filter(r=>r.employment_status==="มีงานทำ").length,n);
+  const delivR=pct(rows.filter(r=>r.clo1==="ใช่ ทำครบทั้งหมด (วิเคราะห์ + ออกแบบ + พัฒนา)").length,n);
+  const main=document.getElementById("main");
+  main.innerHTML=`
+<div class="sec-label">ภาพรวม</div>
+<div class="kpi-grid" id="sp-kpi"></div>
+<div class="sec-label">ผลการบรรลุ CLO — AUN-QA C1, C4</div>
+<div class="clo-grid">
+  <div id="sp-clo-list"></div>
+  <div class="card"><div class="card-title">CLO Radar Chart</div><div class="card-sub">เปรียบเทียบ 5 CLO (คะแนน 1–5)</div><div class="chart-wrap"><canvas id="sp-radar"></canvas></div></div>
+</div>
+<div class="chart-grid" style="margin-top:16px">
+  <div class="card"><div class="card-title">CLO ที่อ่อนก่อนทำโปรเจก (pre_clo_weak)</div><div class="card-sub">AUN-QA C1 — Baseline ก่อนเริ่ม</div><div class="bar-list" id="sp-preclo"></div></div>
+  <div class="card"><div class="card-title">PLO ที่ต้องพัฒนาเพิ่ม</div><div class="card-sub">AUN-QA C1</div><div class="bar-list" id="sp-plo"></div></div>
+</div>
+<div class="chart-grid" style="margin-top:16px">
+  <div class="card"><div class="card-title">Soft Skills ที่ต้องพัฒนา</div><div class="card-sub">CLO4, CLO5, PLO4</div><div class="bar-list" id="sp-soft"></div></div>
+  <div class="card"><div class="card-title">CLO1 — ระดับการพัฒนาระบบ</div><div class="card-sub">สัดส่วนนิสิตที่ทำได้ครบ/บางส่วน/ไม่ได้</div><div class="chart-sm"><canvas id="sp-clo1-pie"></canvas></div></div>
+</div>
+<div class="sec-label">ข้อมูลโปรเจก</div>
+<div class="chart-grid">
+  <div class="card"><div class="card-title">ประเภทโปรเจก</div><div class="card-sub">project_type distribution</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center"><div class="chart-sm"><canvas id="sp-type-pie"></canvas></div><div class="pie-legend" id="sp-type-leg"></div></div></div>
+  <div class="card"><div class="card-title">ลักษณะการทำโปรเจก</div><div class="card-sub">เดี่ยว vs กลุ่ม</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center"><div class="chart-sm"><canvas id="sp-team-pie"></canvas></div><div class="pie-legend" id="sp-team-leg"></div></div></div>
+</div>
+<div class="sec-label">ผลลัพธ์โปรเจก — AUN-QA C1, C3</div>
+<div class="chart-grid">
+  <div class="card"><div class="card-title">สถานะการส่งมอบโปรเจก</div><div class="card-sub">clo1_detail</div><div class="bar-list" id="sp-delivery"></div></div>
+  <div class="card"><div class="card-title">การนำเสนอ / ส่งประกวด</div><div class="card-sub">project_presented</div><div class="bar-list" id="sp-present"></div></div>
+</div>
+<div class="chart-grid" style="margin-top:16px">
+  <div class="card"><div class="card-title">โปรเจกถูกนำไปพัฒนาต่อ / ใช้จริง</div><div class="card-sub">project_continued</div><div class="bar-list" id="sp-continue"></div></div>
+  <div class="card"><div class="card-title">ความพึงพอใจในโปรเจก (avg ${avgSat.toFixed(2)}/5)</div><div class="card-sub">project_satisfaction distribution</div><div class="chart-sm"><canvas id="sp-sat-bar"></canvas></div></div>
+</div>
+<div class="sec-label">ทักษะที่ใช้ — AUN-QA C1</div>
+<div class="chart-grid">
+  <div class="card"><div class="card-title">Programming Languages</div><div class="card-sub">Top 8</div><div class="bar-list" id="sp-lang"></div></div>
+  <div class="card"><div class="card-title">Frameworks / Libraries</div><div class="card-sub">Top 6</div><div class="bar-list" id="sp-fw"></div></div>
+</div>
+<div class="chart-grid-3" style="margin-top:16px">
+  <div class="card"><div class="card-title">Database / DBMS</div><div class="card-sub">Top 6</div><div class="bar-list" id="sp-db"></div></div>
+  <div class="card"><div class="card-title">Tools / DevOps</div><div class="card-sub">Top 6</div><div class="bar-list" id="sp-tools"></div></div>
+  <div class="card"><div class="card-title">การใช้ AI Tools</div><div class="card-sub">PLO5</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center"><div class="chart-sm"><canvas id="sp-ai-pie"></canvas></div><div class="pie-legend" id="sp-ai-leg"></div></div></div>
+</div>
+<div class="sec-label">ภาวะการมีงานทำ — AUN-QA C6</div>
+<div class="chart-grid">
+  <div class="card"><div class="card-title">สถานภาพการทำงาน</div><div class="card-sub">employment_status</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center"><div class="chart-sm"><canvas id="sp-emp-pie"></canvas></div><div class="pie-legend" id="sp-emp-leg"></div></div></div>
+  <div class="card"><div class="card-title">ปัญหาพิเศษช่วยให้ได้งานไหม (avg ${avg(rows,"special_helped_job").toFixed(2)}/5)</div><div class="card-sub">special_helped_job distribution</div><div class="chart-sm"><canvas id="sp-help-bar"></canvas></div></div>
+</div>
+<div class="sec-label">หลักสูตรและอาจารย์ — AUN-QA C3, C7</div>
+<div class="chart-grid">
+  <div class="card"><div class="card-title">ความรู้จาก ม. เพียงพอไหม (avg ${avg(rows,"univ_ready").toFixed(2)}/5)</div><div class="card-sub">univ_ready distribution</div><div class="chart-sm"><canvas id="sp-univ-bar"></canvas></div></div>
+  <div class="card"><div class="card-title">คะแนนอาจารย์ที่ปรึกษา</div><div class="card-sub">advisor_care + advisor_feedback</div><div class="bar-list" id="sp-adv-scores"></div></div>
+</div>
+<div class="chart-grid" style="margin-top:16px">
+  <div class="card" style="grid-column:1/-1"><div class="card-title">ข้อเสนอแนะต่อหลักสูตร — AUN-QA C3</div><div class="card-sub">advice_curriculum</div><div id="sp-advice" style="margin-top:8px;display:flex;flex-direction:column;gap:8px;max-height:480px;overflow-y:auto;padding-right:4px"></div></div>
+</div>`;
+
+  const kpis=[
+    {l:"ผู้ตอบ",v:n+" คน",s:"ทั้งหมด",c:"#2563eb"},
+    {l:"CLO เฉลี่ย",v:overallCLO.toFixed(2)+"/5",s:"CLO 1–5",c:"#0d9488"},
+    {l:"ส่งมอบโปรเจกครบ",v:delivR+"%",s:"นิสิต",c:"#d97706"},
+    {l:"ความพึงพอใจโปรเจก",v:avgSat.toFixed(2)+"/5",s:"เฉลี่ย",c:"#7c3aed"},
+    {l:"อาจารย์นิเทศ",v:avg(rows,"advisor_care").toFixed(2)+"/5",s:"ความสม่ำเสมอ",c:"#0891b2"},
+    {l:"ความพร้อม ม.",v:avg(rows,"univ_ready").toFixed(2)+"/5",s:"ความรู้เพียงพอ",c:"#65a30d"},
+    {l:"มีงานทำ",v:empR+"%",s:"หลังเรียนจบ",c:"#16a34a"},
+  ];
+  document.getElementById("sp-kpi").innerHTML=kpis.map(k=>`<div class="kpi"><div class="kpi-accent" style="background:${k.c}"></div><div class="kpi-label">${k.l}</div><div class="kpi-value" style="color:${k.c}">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join("");
+
+  setTimeout(()=>{
+    const cloItems=[
+      {k:"clo1",l:"CLO 1",d:"พัฒนาระบบสารสนเทศได้",multi:true},
+      {k:"clo2",l:"CLO 2",d:"เลือกใช้เทคโนโลยีที่เหมาะสม"},
+      {k:"clo3",l:"CLO 3",d:"พัฒนางานตามข้อกำหนดโครงงาน"},
+      {k:"clo4",l:"CLO 4",d:"ปฏิบัติงานที่รับผิดชอบ"},
+      {k:"clo5",l:"CLO 5",d:"นำเสนองานและทำงานร่วมกัน"},
+    ];
+    const cloScores=cloItems.map(c=>c.multi?avgClo1(rows):avg(rows,c.k));
+    document.getElementById("sp-clo-list").innerHTML=cloItems.map((c,i)=>{
+      const s=cloScores[i],p=Math.min(s/5*100,100);
+      return`<div class="clo-item"><div class="clo-name">${c.l} — ${c.d}</div><div class="clo-bar-wrap"><div class="clo-bg"><div class="clo-fill" style="width:${p}%;background:${sc(s)}"></div></div><div class="clo-score" style="color:${sc(s)}">${s.toFixed(2)}/5</div></div></div>`;
+    }).join("");
+    ch["sp-radar"]=new Chart(document.getElementById("sp-radar"),{type:"radar",data:{labels:cloItems.map(c=>c.l),datasets:[{label:"คะแนน",data:cloScores,backgroundColor:"rgba(37,99,235,.12)",borderColor:"#2563eb",borderWidth:2,pointBackgroundColor:"#2563eb",pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,scales:{r:{min:0,max:5,ticks:{stepSize:1,font:{size:10}},pointLabels:{font:{size:12,family:"Sarabun"}}}},plugins:{legend:{display:false}}}});
+    mkBars("sp-preclo",cnt(rows,"pre_clo_weak"),"#7c3aed",5);
+    mkBars("sp-plo",cnt(rows,"plo_weak"),"#0d9488",6);
+    mkBars("sp-soft",cnt(rows,"soft_skills_weak"),"#d97706",6);
+    mkPie("sp-clo1-pie",null,topN(cnt(rows,"clo1")),["#16a34a","#d97706","#e11d48"]);
+    mkPie("sp-type-pie","sp-type-leg",topN(cnt(rows,"project_type"),6),C);
+    mkPie("sp-team-pie","sp-team-leg",topN(cnt(rows,"project_team")),["#2563eb","#0d9488"]);
+    mkBars("sp-delivery",cnt(rows,"clo1_detail"),"#2563eb",4);
+    mkBars("sp-present",cnt(rows,"project_presented"),"#0d9488",4);
+    mkBars("sp-continue",cnt(rows,"project_continued"),"#65a30d",4);
+    const satD=[1,2,3,4,5].map(x=>rows.filter(r=>+r.project_satisfaction===x).length);
+    ch["sp-sat-bar"]=new Chart(document.getElementById("sp-sat-bar"),{type:"bar",data:{labels:["1","2","3","4","5"],datasets:[{data:satD,backgroundColor:["#fee2e2","#fef3c7","#fef9c3","#d1fae5","#a7f3d0"],borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
+    mkBars("sp-lang",cnt(rows,"lang"),"#2563eb",8);
+    mkBars("sp-fw",cnt(rows,"framework"),"#7c3aed",6);
+    mkBars("sp-db",cnt(rows,"db"),"#0d9488",6);
+    mkBars("sp-tools",cnt(rows,"tools"),"#0891b2",6);
+    mkPie("sp-ai-pie","sp-ai-leg",topN(cnt(rows,"ai_use")),["#16a34a","#d97706","#64748b","#e11d48"]);
+    mkPie("sp-emp-pie","sp-emp-leg",topN(cnt(rows,"employment_status")),["#16a34a","#d97706","#e11d48","#7c3aed"]);
+    const helpD=[1,2,3,4,5].map(x=>rows.filter(r=>+r.special_helped_job===x).length);
+    ch["sp-help-bar"]=new Chart(document.getElementById("sp-help-bar"),{type:"bar",data:{labels:["1","2","3","4","5"],datasets:[{data:helpD,backgroundColor:["#fee2e2","#fef3c7","#fef9c3","#d1fae5","#a7f3d0"],borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
+    const univD=[1,2,3,4,5].map(x=>rows.filter(r=>+r.univ_ready===x).length);
+    ch["sp-univ-bar"]=new Chart(document.getElementById("sp-univ-bar"),{type:"bar",data:{labels:["1","2","3","4","5"],datasets:[{data:univD,backgroundColor:["#fee2e2","#fef3c7","#fef9c3","#d1fae5","#a7f3d0"],borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
+    const advs=[...new Set(rows.map(r=>String(r.advisor||"")).filter(v=>v&&v!=="undefined"))];
+    const advSc=advs.map(a=>{const ar=rows.filter(r=>String(r.advisor||"")===a);const care=avg(ar,"advisor_care");const fb=avg(ar,"advisor_feedback");return{name:a,care:isNaN(care)?0:care,fb:isNaN(fb)?0:fb,n:ar.length};}).sort((a,b)=>b.care-a.care);
+    document.getElementById("sp-adv-scores").innerHTML=advSc.map(a=>`<div class="bar-row"><div class="bar-label">${a.name}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(a.care/5*100)}%;background:${sc(a.care)}"><span>${a.care.toFixed(1)}</span></div></div><div style="font-size:11px;color:var(--muted);min-width:30px;text-align:right">${a.n}คน</div></div>`).join("");
+    const advice=rows.map(r=>String(r.advice_curriculum||"").trim()).filter(v=>v&&v.length>2);
+    const ael=document.getElementById("sp-advice");
+    if(ael)ael.innerHTML=advice.map(q=>`<div class="quote">${q}</div>`).join("")||"<span style='color:var(--muted);font-size:13px'>ยังไม่มีข้อมูล</span>";
   },50);
 }
 function mkPie(cid,lid,data,colors){
