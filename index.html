@@ -40,6 +40,22 @@
   input[type=text],textarea{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;color:var(--text);background:#fff;margin-top:8px;outline:none;transition:border-color .15s}
   input[type=text]:focus,textarea:focus{border-color:var(--accent)}
   textarea{min-height:90px;resize:vertical;line-height:1.6}
+  /* Role selection */
+  .role-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:var(--bg)}
+  .role-card{background:#fff;border-radius:16px;padding:32px;max-width:480px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,.08);text-align:center}
+  .role-logo{width:52px;height:52px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:14px;font-weight:700;color:#0f2044;border:2px solid #e2e8f0}
+  .role-title{font-size:18px;font-weight:600;color:var(--text);margin-bottom:6px}
+  .role-sub{font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6}
+  .role-options{display:flex;flex-direction:column;gap:10px}
+  .role-btn{padding:14px 20px;border-radius:12px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:14px;text-align:left}
+  .role-btn:hover{border-color:var(--accent);background:#eff6ff}
+  .role-btn.selected{border-color:var(--accent);background:#eff6ff}
+  .role-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+  .role-btn-title{font-size:14px;font-weight:600;color:var(--text)}
+  .role-btn-desc{font-size:12px;color:var(--muted);margin-top:2px}
+  .role-confirm{width:100%;padding:12px;border-radius:10px;background:var(--accent);color:#fff;border:none;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;margin-top:14px;opacity:.4;pointer-events:none;transition:all .15s}
+  .role-confirm.active{opacity:1;pointer-events:auto}
+  .role-confirm:hover.active{background:#1d4ed8}
   .biz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:8px}
   .biz-opt{border:1px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:all .15s;user-select:none;display:flex;gap:10px;align-items:flex-start}
   .biz-opt:hover{background:#eff6ff;border-color:#93c5fd}
@@ -59,11 +75,91 @@
   .success-title{font-size:20px;font-weight:600;color:var(--success);margin-bottom:8px}
   .success-sub{font-size:14px;color:var(--muted);line-height:1.7}
   .submit-wrap{padding:8px 0 16px}
+  .has-error{border-color:#dc2626 !important;background:#fff5f5 !important}
+  .has-error .q-label,.has-error label.q-label{color:#dc2626 !important}
+  .has-error .opts,.has-error .scale-row,.has-error input[type=text],.has-error textarea{outline:2px solid #dc2626;border-radius:8px}
+  /* branch sections สำหรับ buildSpecialForm section 6 */
+  .branch-section{border-left:3px solid;border-radius:0 10px 10px 0;margin-top:8px;overflow:hidden}
+  .branch-green{border-color:#16a34a;background:#f0fdf4}
+  .branch-amber{border-color:#d97706;background:#fffbeb}
+  .branch-red{border-color:#e11d48;background:#fff5f5}
+  .branch-blue{border-color:#2563eb;background:#eff6ff}
+  .branch-head{padding:8px 14px;font-size:12px;font-weight:600;border-bottom:1px solid rgba(0,0,0,.06)}
+  .branch-green .branch-head{color:#065f46}
+  .branch-amber .branch-head{color:#92400e}
+  .branch-red .branch-head{color:#991b1b}
+  .branch-blue .branch-head{color:#1e40af}
+  .branch-body{padding:12px 14px;display:flex;flex-direction:column;gap:12px}
+  /* buildSpecialForm — classes ที่ไม่มีในฟอร์มหลัก */
+  .section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;overflow:hidden}
+  .section-header{padding:14px 20px;background:#f8fafc;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;font-weight:600;font-size:14px;color:var(--text)}
+  .section-body{padding:16px 20px;display:flex;flex-direction:column;gap:14px}
+  .q-wrap{display:flex;flex-direction:column;gap:6px}
+  .q-wrap .q-label{font-size:14px;font-weight:500;color:var(--text)}
+  .opts{display:flex;flex-direction:column;gap:6px}
+  .opt-label{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:all .15s;font-size:13px}
+  .opt-label:hover{background:#eff6ff;border-color:#93c5fd}
+  .opt-label input{margin-top:2px;accent-color:var(--accent);flex-shrink:0}
+  .scale-wrap{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .scale-label-end{font-size:11px;color:var(--muted)}
+  .scale-item{display:flex;flex-direction:column;align-items:center;gap:3px}
+  .scale-item input{accent-color:var(--accent)}
+  .scale-item span{font-size:11px;color:var(--muted)}
 </style>
 </head>
 <body>
-<header>
-  <div style="background:#0f2044;padding:14px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+<div id="role-screen" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:#f0f4f8">
+  <div style="background:#fff;border-radius:16px;max-width:500px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,.08);overflow:hidden">
+    <!-- Header -->
+    <div style="background:#0f2044;padding:20px 24px;display:flex;align-items:center;gap:14px">
+      <div style="width:42px;height:42px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;font-weight:700;color:#0f2044">KU</div>
+      <div style="width:1px;height:32px;background:rgba(255,255,255,.25);flex-shrink:0"></div>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:#fff">สาขาวิชาเทคโนโลยีสารสนเทศและการสื่อสาร</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px">ภาควิชาวิทยาการคำนวณฯ · คณะศิลปศาสตร์และวิทยาศาสตร์ · ม.เกษตรศาสตร์ กำแพงแสน</div>
+      </div>
+    </div>
+    <!-- Body -->
+    <div style="padding:28px 28px 24px;text-align:center">
+      <div style="font-size:17px;font-weight:700;color:#0f172a;margin-bottom:4px;line-height:1.4">แบบสอบถามความพึงพอใจของบัณฑิตที่มีต่อหลักสูตร</div>
+      <div style="font-size:13px;color:#475569;margin-bottom:4px;font-weight:500">สาขาวิชาเทคโนโลยีสารสนเทศและการสื่อสาร</div>
+      <div id="role-year" style="font-size:12px;color:#2563eb;font-weight:600;margin-bottom:20px"></div>
+      <!-- Info box -->
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;text-align:left;margin-bottom:20px">
+        <div style="font-size:12px;font-weight:600;color:#0f2044;margin-bottom:8px">ก่อนเริ่มกรอก</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#475569">
+          <div>📌 เตรียม<strong>รหัสนิสิต 10 หลัก</strong>ให้พร้อม</div>
+          <div>⏱ ใช้เวลาประมาณ <strong>10–15 นาที</strong></div>
+          <div>📊 ข้อมูลนำไปใช้จัดทำ <strong>SAR และ AUN-QA</strong> เพื่อพัฒนาหลักสูตร</div>
+        </div>
+      </div>
+      <!-- Role buttons -->
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+        <button class="role-btn" onclick="selectRole('coop',this)">
+          <div class="role-icon" style="background:#eff6ff">🏢</div>
+          <div style="text-align:left">
+            <div class="role-btn-title">สหกิจศึกษา</div>
+            <div class="role-btn-desc">ฝึกปฏิบัติในสถานประกอบการจริง ระยะเวลา 1 ภาคการศึกษา</div>
+          </div>
+        </button>
+        <button class="role-btn" onclick="selectRole('special',this)">
+          <div class="role-icon" style="background:#f0fdf4">📋</div>
+          <div style="text-align:left">
+            <div class="role-btn-title">ปัญหาพิเศษ</div>
+            <div class="role-btn-desc">พัฒนาโปรเจกภายใต้การดูแลของอาจารย์ที่ปรึกษาในสาขา</div>
+          </div>
+        </button>
+      </div>
+      <div style="font-size:11px;color:#94a3b8;text-align:left;padding:8px 4px 4px;line-height:1.6">
+        <span style="color:#d97706;font-weight:600">หมายเหตุ:</span> กรุณาเลือกประเภทการฝึกปฏิบัติให้ตรงกับ<strong>แผนการเรียนที่ท่านเลือกไว้ในปีที่ 4</strong>
+      </div>
+      <button id="role-confirm-btn" onclick="confirmRole()" style="width:100%;padding:12px;border-radius:10px;background:#2563eb;color:#fff;border:none;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;opacity:.4;pointer-events:none;transition:all .15s">ถัดไป →</button>
+    </div>
+  </div>
+</div>
+<div id="main-form" style="display:none">
+<header style="border-radius:0 0 14px 14px;overflow:hidden">
+  <div style="background:#0f2044;padding:14px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-radius:0 0 14px 14px;box-shadow:0 2px 12px rgba(0,0,0,.2)">
     <div style="width:38px;height:38px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">
       <span style="font-size:12px;font-weight:700;color:#0f2044">KU</span>
     </div>
@@ -83,8 +179,10 @@
   <span class="prog-label" id="prog-label">0%</span>
 </div>
 <div class="container" id="form-container"></div>
+
+</div>
 <script>
-const SCRIPT_URL='https://script.google.com/macros/s/AKfycbwOn6c2qebWU3q-aSZ90FOdR4zhFCv86OwegmqYd-YbupscHVPQnETdEAk_fzoWg_g/exec';
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbx-E1JmP4nAeI20vUYeeamIJN9FBdmuE-6uCLP9M8K6dbFRei7Tc2JTRh_W5x_U8V-M/exec';
 let CONFIG={academic_year:'2568',semester:'2 (ภาคปลาย)'};
 const sections=[
   {num:0,title:'ข้อมูลนิสิต',sub:'กรุณากรอกข้อมูลให้ครบถ้วน',questions:[
@@ -96,7 +194,7 @@ const sections=[
     {id:'company',type:'display',label:'ชื่อบริษัท / หน่วยงาน'},
     {id:'business_type',type:'biztype',label:'ประเภทของกิจการ',required:true},
   ]},
-  {num:1,title:'ข้อมูลสถานประกอบการ',sub:'CLO 3, 4 · PLO3, PLO6 · AUN-QA C6',questions:[
+  {num:1,title:'ข้อมูลสถานประกอบการ',sub:'PLO3, PLO6 · AUN-QA C6',questions:[
 
     {id:'job_title',type:'text',label:'2. ชื่อตำแหน่งงาน (Job Title)',required:true},
     {id:'need_coding',type:'radio',label:'3. งานที่ได้รับมอบหมายต้องเขียนโปรแกรมหรือไม่',required:true,opts:['ต้องเขียนโปรแกรม','ไม่ต้องเขียนโปรแกรม']},
@@ -104,15 +202,15 @@ const sections=[
     {id:'apply_process',type:'checkbox',label:'5. ขั้นตอนที่ต้องทำในการสมัครงาน',hint:'เลือกได้มากกว่า 1 ข้อ',opts:['แสดง Portfolio ผลงาน','สอบสัมภาษณ์','สอบความรู้ด้าน Technical','อื่นๆ']},
   ]},
   {num:2,title:'การบรรลุผลการเรียนรู้ (CLO/PLO)',sub:'CLO 1–5 · PLO 1–6 · AUN-QA C1, C4',questions:[
-    {id:'clo1',type:'radio',label:'6. CLO 1 — ท่านได้วิเคราะห์ ออกแบบ หรือพัฒนาระบบสารสนเทศในงานที่ได้รับมอบหมายหรือไม่',required:true,opts:['ใช่ ทำครบทั้งหมด (วิเคราะห์ + ออกแบบ + พัฒนา)','ทำบางส่วน','ไม่ได้ทำ']},
+    {id:'clo1',type:'radio',label:'6. CLO 1 — วิเคราะห์ ออกแบบ และพัฒนาระบบสารสนเทศได้',required:true,opts:['ใช่ ทำครบทั้งหมด (วิเคราะห์ + ออกแบบ + พัฒนา)','ทำบางส่วน','ไม่ได้ทำ']},
     {id:'work_used',type:'radio',label:'7. ผลงานนั้นถูกนำไปใช้จริงในองค์กรหรือไม่',opts:['ใช่ นำไปใช้จริง','บางส่วน','ไม่ได้นำไปใช้','ยังไม่แล้วเสร็จ']},
-    {id:'clo2',type:'scale',label:'8. CLO 2 — ท่านได้เลือกใช้เทคโนโลยีที่เหมาะสมกับงานได้หรือไม่',required:true,lo:'ไม่ได้เลือกเองเลย',hi:'เลือกได้เหมาะสมมาก'},
-    {id:'clo3',type:'scale',label:'9. CLO 3 — ท่านพัฒนางาน IT ที่สอดคล้องกับความต้องการขององค์กรได้หรือไม่',required:true,lo:'ทำไม่ได้เลย',hi:'ทำได้อย่างครบถ้วน'},
-    {id:'clo4',type:'scale',label:'10. CLO 4 — ท่านทำงานที่ได้รับมอบหมายได้อย่างมีประสิทธิภาพและตรงเวลาหรือไม่',required:true,lo:'ไม่ได้เลย',hi:'มีประสิทธิภาพมาก'},
-    {id:'clo5',type:'scale',label:'11. CLO 5 — ท่านทำงานร่วมกับผู้อื่นและนำเสนองานได้โดยคำนึงถึงจรรยาบรรณหรือไม่',required:true,lo:'ทำไม่ได้เลย',hi:'ทำได้อย่างดีมาก'},
-    {id:'plo_weak',type:'checkbox',label:'12. PLO ที่ท่านคิดว่ายังต้องพัฒนาเพิ่ม',hint:'เลือกได้มากกว่า 1 ข้อ',opts:['PLO1: แก้ปัญหาด้าน IT','PLO2: ออกแบบฐานข้อมูล','PLO3: พัฒนาระบบสารสนเทศ','PLO4: ทำงานร่วมกัน / สื่อสาร','PLO5: จริยธรรม / AI','PLO6: ปฏิบัติงานในสถานประกอบการ','ไม่มี บรรลุได้ดีทุก PLO']},
+    {id:'clo2',type:'scale',label:'8. CLO 2 — เลือกใช้เทคโนโลยีที่เหมาะสมในการปฏิบัติงานในสถานประกอบการที่เกี่ยวข้องด้านคอมพิวเตอร์ได้',required:true,lo:'ไม่ได้เลือกเองเลย',hi:'เลือกได้เหมาะสมมาก'},
+    {id:'clo3',type:'scale',label:'9. CLO 3 — วิเคราะห์ ออกแบบ และพัฒนางานทางด้านเทคโนโลยีสารสนเทศให้กับหน่วยงานได้',required:true,lo:'ทำไม่ได้เลย',hi:'ทำได้อย่างครบถ้วน'},
+    {id:'clo4',type:'scale',label:'10. CLO 4 — แสดงออกถึงความรับผิดชอบและทำงานตามที่ได้รับมอบหมายจากองค์กรได้อย่างมีประสิทธิภาพ',required:true,lo:'ไม่ได้เลย',hi:'มีประสิทธิภาพมาก'},
+    {id:'clo5',type:'scale',label:'11. CLO 5 — นำเสนองานที่ได้รับมอบหมาย และทำงานร่วมกับผู้อื่นได้ โดยนึกถึงจรรยาบรรณและความรับผิดชอบต่อวิชาชีพ',required:true,lo:'ทำไม่ได้เลย',hi:'ทำได้อย่างดีมาก'},
+    {id:'plo_weak',type:'checkbox',label:'12. PLO ที่ท่านคิดว่ายังต้องพัฒนาเพิ่ม',hint:'เลือกได้มากกว่า 1 ข้อ',opts:['PLO1: แก้ปัญหางานด้านเทคโนโลยีสารสนเทศ โดยใช้องค์ความรู้ทางคอมพิวเตอร์และเทคโนโลยีสารสนเทศได้อย่างถูกต้องและเหมาะสมกับบริบท','PLO2: ออกแบบฐานข้อมูลที่เหมาะสมกับประเภทของข้อมูลและการใช้งาน โดยใช้หลักการเขียนโปรแกรมและการจัดเก็บข้อมูลอย่างเป็นระบบ','PLO3: พัฒนาระบบสารสนเทศที่สอดคล้องกับบริบทของปัญหาและความต้องการของผู้ใช้งาน โดยคำนึงถึงความปลอดภัยและความมั่นคงของสารสนเทศ','PLO4: ทำงานร่วมกับผู้อื่นตามบทบาทหน้าที่อย่างรับผิดชอบ โดยสื่อสารข้อมูลได้อย่างเหมาะสมกับบริบท และพัฒนาตนเองอย่างต่อเนื่อง','PLO5: ปฏิบัติงานด้านเทคโนโลยีสารสนเทศ โดยคำนึงถึงจริยธรรมการใช้เทคโนโลยีสารสนเทศและปัญญาประดิษฐ์','PLO6: ปฏิบัติงานด้านเทคโนโลยีสารสนเทศในสถานประกอบการด้วยความซื่อสัตย์และรับผิดชอบ โดยใช้ความรู้และทักษะด้านคอมพิวเตอร์และเทคโนโลยีสารสนเทศได้สอดคล้องกับบริบทและความต้องการของสถานประกอบการ','ไม่มี บรรลุได้ดีทุก PLO']},
   ]},
-  {num:3,title:'การเรียนรู้และการฝึกอบรม',sub:'CLO 2, 4 · PLO1, PLO6 · AUN-QA C3',questions:[
+  {num:3,title:'การเรียนรู้และการฝึกอบรม',sub:'CLO 2 · PLO1 · AUN-QA C3',questions:[
     {id:'training_type',type:'checkbox',label:'13. รูปแบบการ Training ที่บริษัทจัดให้',hint:'เลือกได้มากกว่า 1 ข้อ',opts:['Course / Workshop ที่มีวิทยากรสอน','พี่เลี้ยง (Mentor) ให้คำปรึกษา','เอกสาร / Tutorial ให้ฝึกทำตาม','Self-learning ด้วยตัวเอง','On-the-job Training โดยตรง','ไม่มีการ Training','อื่นๆ']},
     {id:'univ_ready',type:'scale',label:'14. ความรู้และทักษะที่ได้จากมหาวิทยาลัยเพียงพอสำหรับการปฏิบัติงานหรือไม่',required:true,lo:'ไม่เพียงพอเลย',hi:'เพียงพอมาก'},
     {id:'useful_subject',type:'text',label:'15. วิชาในหลักสูตรที่มีประโยชน์มากที่สุดระหว่างสหกิจ',hint:'ระบุชื่อวิชา'},
@@ -130,15 +228,7 @@ const sections=[
     {id:'ai_tools',type:'text',label:'23. ระบุ AI Tools ที่ใช้ (ถ้ามี)',hint:'เช่น ChatGPT, GitHub Copilot'},
     {id:'data_privacy',type:'radio',label:'24. บริษัทมีนโยบายด้าน Data Privacy / Security หรือไม่',required:true,opts:['มีนโยบายชัดเจนและมีการอบรม','มีนโยบาย แต่ไม่มีการอบรม','ไม่มีนโยบายที่ชัดเจน','ไม่ทราบ']},
   ]},
-  {num:6,title:'สวัสดิการและการสนับสนุน',sub:'CLO 4 · PLO4, PLO6 · AUN-QA C6',questions:[
-    {id:'salary',type:'radio',label:'25. ค่าตอบแทนที่ได้รับ (บาท/เดือน)',required:true,opts:['ไม่ได้รับ','1 – 5,000','5,001 – 10,000','10,001 – 15,000','15,001 – 20,000','20,001 – 30,000','มากกว่า 30,000']},
-    {id:'expense',type:'radio',label:'26. ค่าใช้จ่ายรายเดือนโดยประมาณ (อาหาร + ที่พัก + เดินทาง)',required:true,opts:['0 – 5,000','5,001 – 10,000','10,001 – 15,000','มากกว่า 15,000']},
-    {id:'advisor_care',type:'scale',label:'27. อาจารย์นิเทศให้การดูแลและติดตามผลอย่างสม่ำเสมอหรือไม่',required:true,lo:'ไม่สม่ำเสมอเลย',hi:'สม่ำเสมอมาก'},
-    {id:'advisor_feedback',type:'scale',label:'28. ท่านได้รับ feedback จากอาจารย์นิเทศที่เป็นประโยชน์หรือไม่',required:true,lo:'ไม่เป็นประโยชน์เลย',hi:'เป็นประโยชน์มาก'},
-    {id:'future_it',type:'radio',label:'29. หลังสหกิจ คาดว่าจะทำงานในสายเทคโนโลยีหรือไม่',required:true,opts:['ใช่','ไม่ใช่','ยังไม่แน่ใจ']},
-    {id:'job_status',type:'radio',label:'30. สถานะการหางานปัจจุบัน',required:true,opts:['ได้งานแล้ว','กำลังหางาน','ยังไม่ได้เริ่มหางาน']},
-    {id:'invited_back',type:'radio',label:'31. ได้รับการชักชวนให้สมัครงานต่อที่บริษัทหรือไม่',opts:['ได้รับการชักชวน','ไม่ได้รับการชักชวน']},
-  ]},
+  {num:6,title:'สวัสดิการและการสนับสนุน',sub:'PLO4, PLO6 · AUN-QA C6, C7',questions:[]},
   {num:7,title:'คำแนะนำและข้อเสนอแนะ',sub:'CLO 4, 5 · PLO4–6 · AUN-QA C3, C4, C6',questions:[
     {id:'recommend',type:'scale',label:'32. ท่านจะแนะนำบริษัทนี้ให้รุ่นน้องมาฝึกสหกิจหรือไม่',required:true,lo:'ไม่แนะนำเลย',hi:'แนะนำมาก'},
     {id:'advice_junior',type:'textarea',label:'33. คำแนะนำสำหรับรุ่นน้องในการเตรียมตัว',required:true,hint:'ด้านทักษะ / ทัศนคติ / การสัมภาษณ์'},
@@ -154,6 +244,7 @@ function buildForm(){
   const c=document.getElementById('form-container');
   let h='';
   sections.forEach(sec=>{
+    if(sec.num===6){h+=buildSec6Coop();return;}
     h+=`<div class="section-wrap"><div class="section-head"><div class="section-num">${sec.num}</div><div><div class="section-title">${sec.title}</div><div class="section-sub">${sec.sub}</div></div></div>`;
     sec.questions.forEach(q=>{
       h+=`<div class="q-block" id="qb-${q.id}"><div class="q-label">${q.label}${q.required?'<span class="required">*</span>':''}</div>`;
@@ -194,6 +285,10 @@ function buildForm(){
     h+=`</div>`;
   });
   h+=`<div class="submit-wrap"><button class="btn-submit" id="btn-sub" onclick="sub()"><span class="btn-text">ส่งแบบสอบถาม</span><span class="spinner"></span></button></div>`;
+  activeReqIds=[
+    ...sections.filter(s=>s.num!==6).flatMap(s=>s.questions.filter(q=>q.required).map(q=>q.id)),
+    'salary','expense','advisor_care','advisor_feedback','future_it','employment_status'
+  ];
   c.innerHTML=h;upd();
 }
 function showOther(id,show){const el=document.getElementById(id+'_other');if(el){el.style.display=show?'block':'none';if(!show){el.value='';delete ans[id+'_other'];}}}function setR(id,val,el){ans[id]=val;el.closest('.options').querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');showOther(id,val==='อื่นๆ');upd();}
@@ -230,13 +325,29 @@ async function lookupStudent(id){
       if(fn){fn.value=data.first_name;fn.readOnly=true;fn.style.background='#f0fdf4';}
       if(ln){ln.value=data.last_name;ln.readOnly=true;ln.style.background='#f0fdf4';}
       const badge=(val,color='#E6F1FB',text='#0C447C')=>'<span style="display:inline-block;padding:3px 12px;border-radius:20px;background:'+color+';color:'+text+';font-size:13px;font-weight:500">'+val+'</span>';
+      // display divs (สำหรับฟอร์มปัญหาพิเศษ)
+      const fnd=document.getElementById('first_name-display');
+      if(fnd) fnd.innerHTML=badge(data.first_name||'-');
+      const lnd=document.getElementById('last_name-display');
+      if(lnd) lnd.innerHTML=badge(data.last_name||'-');
       const prog=document.getElementById('program-display');
       if(prog)prog.innerHTML=badge(data.program);
       const adv=document.getElementById('advisor-display');
       if(adv)adv.innerHTML=badge(data.advisor||'-','#E1F5EE','#085041');
       const comp=document.getElementById('company-display');
       if(comp)comp.innerHTML=badge(data.company||'-','#FAEEDA','#633806');
-      if(statusEl)statusEl.innerHTML='<span style="color:#16a34a;font-size:12px">✓ พบข้อมูลแล้ว</span>';
+      // project fields (สำหรับฟอร์มปัญหาพิเศษ)
+      const projFields=['project_name','project_type','project_team','project_members'];
+      projFields.forEach(f=>{
+        ans[f]=data[f]||'';
+        const el=document.getElementById(f+'-display');
+        if(el){
+          if(data[f]) el.innerHTML=badge(data[f],'#fef9c3','#854d0e');
+          else el.textContent='—';
+        }
+      });
+      const projStatus=data.project_found?'✓ พบข้อมูลนิสิตและโปรเจกแล้ว':'✓ พบข้อมูลนิสิต (ยังไม่มีโปรเจกใน sheet)';
+      if(statusEl)statusEl.innerHTML='<span style="color:#16a34a;font-size:12px">'+projStatus+'</span>';
     }else{
       ['first_name','last_name'].forEach(f=>{
         const el=document.getElementById(f);
@@ -265,26 +376,39 @@ function setBiz(id,val,el){
   }
   upd();
 }
+let activeReqIds=[];
+function highlightMiss(missIds){
+  document.querySelectorAll('.has-error').forEach(function(el){el.classList.remove('has-error');});
+  missIds.forEach(function(id){
+    var el=document.getElementById('qb-'+id)||document.getElementById('qw-'+id);
+    if(el) el.classList.add('has-error');
+  });
+  var first=document.getElementById('qb-'+missIds[0])||document.getElementById('qw-'+missIds[0]);
+  if(first) first.scrollIntoView({behavior:'smooth',block:'center'});
+}
 function upd(){
-  const req=sections.flatMap(s=>s.questions.filter(q=>q.required));
-  const done=req.filter(q=>{const v=ans[q.id];return v&&(Array.isArray(v)?v.length>0:v!=='');}).length;
-  const pct=Math.round(done/req.length*100);
+  const ids=activeReqIds.length?activeReqIds:sections.flatMap(s=>s.questions.filter(q=>q.required).map(q=>q.id));
+  const total=ids.length;
+  const done=ids.filter(id=>{
+    const v=ans[id];
+    const filled=Array.isArray(v)?v.length>0:(v!==undefined&&v!=='');
+    if(filled){
+      var el=document.getElementById('qb-'+id)||document.getElementById('qw-'+id);
+      if(el) el.classList.remove('has-error');
+    }
+    return filled;
+  }).length;
+  const pct=total?Math.round(done/total*100):0;
   document.getElementById('prog').style.width=pct+'%';
   document.getElementById('prog-label').textContent=pct+'%';
 }
 async function sub(){
-  const miss=[];
-  sections.forEach(s=>s.questions.forEach(q=>{if(!q.required)return;const v=ans[q.id];if(!v||(Array.isArray(v)&&v.length===0)||v==='')miss.push(q.id);}));
-  if(miss.length>0){
-    const el=document.getElementById('qb-'+miss[0]);
-    if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.style.borderColor='#dc2626';}
-    alert('กรุณาตอบคำถามที่มีเครื่องหมาย * ให้ครบ (ยังขาดอีก '+miss.length+' ข้อ)');return;
-  }
+  const miss=activeReqIds.filter(id=>{const v=ans[id];return Array.isArray(v)?v.length===0:(!v||v==='');});
+  if(miss.length>0){highlightMiss(miss);return;}
   const btn=document.getElementById('btn-sub');
   btn.classList.add('sending');btn.disabled=true;
   try{
-    const res=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({...ans,academic_year:CONFIG.academic_year,semester:CONFIG.semester,submitted_at:new Date().toISOString()})});
-    if(!res.ok)throw new Error('HTTP '+res.status);
+    await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({...ans,form_token:'ICT2568',academic_year:CONFIG.academic_year,semester:CONFIG.semester,submitted_at:new Date().toISOString()})});
     document.getElementById('form-container').innerHTML=`<div class="success-wrap"><div class="success-icon">✓</div><div class="success-title">ขอบคุณที่ตอบแบบสอบถาม!</div><div class="success-sub">ข้อมูลของท่านถูกบันทึกเรียบร้อยแล้ว<br>ข้อมูลจะถูกนำไปใช้พัฒนาหลักสูตรและประกอบการทำ SAR / AUN-QA</div></div>`;
     document.getElementById('prog').style.width='100%';
     document.getElementById('prog-label').textContent='100%';
@@ -303,11 +427,384 @@ async function init(){
   }catch(e){
     console.warn('ใช้ CONFIG default เพราะโหลดไม่ได้:', e);
   }
-  const t='แบบสอบถามสหกิจศึกษา ปีการศึกษา '+CONFIG.academic_year;
-  document.title=t;
+  document.title='แบบสอบถามความพึงพอใจของบัณฑิตที่มีต่อหลักสูตร ปีการศึกษา '+CONFIG.academic_year;
   const h=document.getElementById('main-title');
-  if(h)h.textContent=t;
-  buildForm();
+  if(h)h.textContent='แบบสอบถามสหกิจศึกษา ปีการศึกษา '+CONFIG.academic_year;
+  const ry=document.getElementById('role-year');
+  if(ry)ry.textContent='ปีการศึกษา '+CONFIG.academic_year+' · '+CONFIG.semester;
+  // ไม่ buildForm ที่นี่ — รอให้เลือก role ก่อน
+  showRoleScreen();
+}
+
+let selectedRole = '';
+function selectRole(role, el) {
+  selectedRole = role;
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  const btn = document.getElementById('role-confirm-btn');
+  btn.style.opacity = '1';
+  btn.style.pointerEvents = 'auto';
+}
+function showRoleScreen() {
+  document.getElementById('role-screen').style.display = 'flex';
+  document.getElementById('main-form').style.display = 'none';
+}
+function confirmRole() {
+  if (!selectedRole) return;
+  document.getElementById('role-screen').style.display = 'none';
+  document.getElementById('main-form').style.display = 'block';
+  // อัปเดต title ตาม role
+  const roleLabel = selectedRole === 'special' ? 'ปัญหาพิเศษ' : 'สหกิจศึกษา';
+  const t = 'แบบสอบถาม' + roleLabel + ' ปีการศึกษา ' + CONFIG.academic_year;
+  document.title = t;
+  const h = document.getElementById('main-title');
+  if(h) h.textContent = t;
+  ans['report_type'] = selectedRole;
+  if (selectedRole === 'special') {
+    buildSpecialForm();
+  } else {
+    buildForm();
+  }
+}
+async function subSp(){
+  const miss=activeReqIds.filter(id=>{const v=ans[id];return Array.isArray(v)?v.length===0:(!v||v==='');});
+  if(miss.length>0){highlightMiss(miss);return;}
+  const btn=document.getElementById('btn-sub-sp');
+  btn.classList.add('sending');btn.disabled=true;
+  try{
+    const res=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({
+      ...ans,form_token:'ICT2568',academic_year:CONFIG.academic_year,
+      semester:CONFIG.semester,submitted_at:new Date().toISOString()
+    })});
+    const data=await res.json();
+    if(data.status==='ok'||data.status==='duplicate'){
+      document.getElementById('form-container').innerHTML='<div class="success-wrap"><div class="success-icon">✓</div><div class="success-title">ขอบคุณที่ตอบแบบสอบถาม!</div><div class="success-sub">'+(data.status==='duplicate'?'ท่านเคยส่งแบบสอบถามนี้แล้ว ขอบคุณครับ/ค่ะ':'ข้อมูลของท่านถูกบันทึกเรียบร้อยแล้ว ขอบคุณที่ช่วยพัฒนาหลักสูตร')+'</div></div>';
+      document.getElementById('prog').style.width='100%';
+      document.getElementById('prog-label').textContent='100%';
+      window.scrollTo({top:0,behavior:'smooth'});
+    }else{throw new Error(data.message||'เกิดข้อผิดพลาด');}
+  }catch(e){
+    alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+    btn.classList.remove('sending');btn.disabled=false;
+  }
+}
+function setRSp(id,val,isOther){
+  ans[id]=val;
+  var oi=document.getElementById(id+'_other_input');
+  if(oi) oi.style.display=(isOther&&val==='อื่นๆ')?'block':'none';
+  upd();
+}
+function setCbSp(id,el,isOther){
+  if(!ans[id]) ans[id]=[];
+  if(el.checked){if(ans[id].indexOf(el.value)<0) ans[id].push(el.value);}
+  else{ans[id]=ans[id].filter(function(v){return v!==el.value;});}
+  var oi=document.getElementById(id+'_other_input');
+  if(oi) oi.style.display=(isOther&&ans[id].indexOf('อื่นๆ')>=0)?'block':'none';
+  upd();
+}
+function showEmpBranch(val){
+  ['sp-employed','sp-searching','sp-nojob','sp-studying'].forEach(function(id){
+    var el=document.getElementById(id);if(el) el.style.display='none';
+  });
+  var map={'มีงานทำ':'sp-employed','กำลังหางาน':'sp-searching','ยังไม่ได้หางาน':'sp-nojob','กำลังศึกษาต่อ':'sp-studying'};
+  var t=map[val];if(t){var el=document.getElementById(t);if(el) el.style.display='block';}
+}
+function mkRSp(name,opts){
+  var h='<div class="opts">';
+  opts.forEach(function(o){
+    var io=(o==='อื่นๆ');
+    h+='<label class="opt-label"><input type="radio" name="'+name+'" value="'+o+'" onchange="setRSp(\''+name+'\',\''+o.replace(/'/g,"\\'")+'\','+io+')"><span>'+o+'</span></label>';
+    if(io) h+='<input type="text" id="'+name+'_other_input" style="display:none;margin-top:4px" placeholder="โปรดระบุ..." oninput="ans[\''+name+'_other\']=this.value">';
+  });
+  return h+'</div>';
+}
+function mkCbSp(name,opts){
+  var h='<div class="opts">';
+  opts.forEach(function(o){
+    var io=(o==='อื่นๆ');
+    h+='<label class="opt-label"><input type="checkbox" value="'+o+'" onchange="setCbSp(\''+name+'\',this,'+io+')"><span>'+o+'</span></label>';
+    if(io) h+='<input type="text" id="'+name+'_other_input" style="display:none;margin-top:4px" placeholder="โปรดระบุ..." oninput="ans[\''+name+'_other\']=this.value">';
+  });
+  return h+'</div>';
+}
+function mkScSp(name){
+  var h='<div class="scale-row">';
+  for(var i=1;i<=5;i++) h+='<button type="button" class="scale-btn" onclick="setSc(\''+name+'\','+i+',this)">'+i+'</button>';
+  return h+'</div><div class="scale-labels"><span>น้อยมาก</span><span>มากที่สุด</span></div>';
+}
+function buildSec6Sp(){
+  var h='<div class="section">';
+  h+='<div class="section-header"><span class="section-num">6</span><span>การมีงานทำ</span></div>';
+  h+='<div class="section-body">';
+  h+='<div class="q-wrap" id="qw-future_it"><label class="q-label">คาดว่าจะทำงานในสายเทคโนโลยีไหม *</label>';
+  h+=mkRSp('future_it',['ใช่','ไม่แน่ใจ','ไม่ ต้องการทำสายอื่น']);
+  h+='</div>';
+  h+='<div class="q-wrap" id="qw-employment_status"><label class="q-label">สถานภาพการทำงานปัจจุบัน *</label><div class="opts">';
+  h+='<label class="opt-label"><input type="radio" name="employment_status" value="มีงานทำ" onchange="setRSp(\'employment_status\',\'มีงานทำ\',false);showEmpBranch(\'มีงานทำ\')"><span>มีงานทำ</span></label>';
+  h+='<label class="opt-label"><input type="radio" name="employment_status" value="กำลังหางาน" onchange="setRSp(\'employment_status\',\'กำลังหางาน\',false);showEmpBranch(\'กำลังหางาน\')"><span>ไม่มีงานทำ และกำลังหางาน</span></label>';
+  h+='<label class="opt-label"><input type="radio" name="employment_status" value="ยังไม่ได้หางาน" onchange="setRSp(\'employment_status\',\'ยังไม่ได้หางาน\',false);showEmpBranch(\'ยังไม่ได้หางาน\')"><span>ไม่มีงานทำ และยังไม่ได้หางาน</span></label>';
+  h+='<label class="opt-label"><input type="radio" name="employment_status" value="กำลังศึกษาต่อ" onchange="setRSp(\'employment_status\',\'กำลังศึกษาต่อ\',false);showEmpBranch(\'กำลังศึกษาต่อ\')"><span>กำลังศึกษาต่อ</span></label>';
+  h+='</div></div>';
+  // Branch: มีงานทำ
+  h+='<div class="branch-section branch-green" id="sp-employed" style="display:none">';
+  h+='<div class="branch-head">✅ สำหรับผู้ที่มีงานทำ</div><div class="branch-body">';
+  h+='<div class="q-wrap"><label class="q-label">ชื่อตำแหน่งงาน *</label><input type="text" placeholder="เช่น Software Developer, Data Analyst" oninput="ans[\'job_title\']=this.value;upd()"></div>';
+  h+='<div class="q-wrap"><label class="q-label">ลักษณะงานที่ปฏิบัติ *</label>'+mkCbSp('job_type',['นักพัฒนาซอฟต์แวร์ (Software Developer)','นักทดสอบระบบ (Software Tester / QA)','นักวิทยาการข้อมูล (Data Scientist / Analyst)','นักวิเคราะห์ระบบ (Business/System Analyst)','ผู้ดูแลระบบ / IT Support / Help Desk','นักออกแบบ UX/UI','ผู้เชี่ยวชาญ Cybersecurity','ผู้จัดการโครงการ / IT Consultant','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">ลักษณะการทำงาน *</label>'+mkRSp('work_type',['งานประจำ (Full-time)','งานชั่วคราว / สัญญาจ้าง (Contract/Part-time)','ธุรกิจส่วนตัว / อาชีพอิสระ','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">ประเภทองค์กร *</label>'+mkRSp('org_type',['หน่วยงานราชการ','รัฐวิสาหกิจ','บริษัทเอกชน','Startup','ธุรกิจส่วนตัว / อิสระ','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">ชื่อหน่วยงาน / บริษัท *</label><input type="text" placeholder="ระบุชื่อองค์กร" oninput="ans[\'company_name\']=this.value;upd()"></div>';
+  h+='<div class="q-wrap"><label class="q-label">ระยะเวลาที่ได้งานหลังสำเร็จการศึกษา *</label>'+mkRSp('time_to_job',['ภายใน 3 เดือน','4–6 เดือน','7–12 เดือน','มากกว่า 1 ปี'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">วิธีการหางานที่ใช้ *</label>'+mkCbSp('find_job_method',['สมัครงานผ่านเว็บไซต์หางาน (JobThai, JobsDB, LinkedIn ฯลฯ)','ติดต่อโดยตรงกับบริษัท/หน่วยงาน','การสอบแข่งขัน/สอบเข้าหน่วยงานราชการ','การแนะนำจากอาจารย์/เพื่อน/เครือข่าย','การฝึกงาน/ปัญหาพิเศษแล้วได้งานต่อเนื่อง','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">รายได้เฉลี่ยต่อเดือน *</label>'+mkRSp('salary_range',['น้อยกว่า 15,000 บาท','15,001 – 20,000 บาท','20,001 – 25,000 บาท','25,001 – 30,000 บาท','มากกว่า 30,000 บาท'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">ความสอดคล้องของงานกับสาขาที่เรียน *</label>'+mkRSp('job_match',['สอดคล้องโดยตรง','สอดคล้องบางส่วน','ไม่สอดคล้องเลย'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">ความพึงพอใจในงานปัจจุบัน (1=น้อยมาก 5=มากที่สุด) *</label>'+mkScSp('job_satisfaction')+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">ความเพียงพอของความรู้จากหลักสูตรต่อการทำงานจริง (1=น้อยมาก 5=มากที่สุด) *</label>'+mkScSp('knowledge_sufficiency')+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">ปัญหาพิเศษมีส่วนช่วยให้ได้งานปัจจุบันไหม (1=น้อยมาก 5=มากที่สุด)</label>'+mkScSp('special_helped_job')+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">ทักษะจากหลักสูตรที่นำมาใช้จริงในการทำงาน</label>'+mkCbSp('skills_used',['การเขียนโปรแกรม','ระบบฐานข้อมูล','เครือข่ายคอมพิวเตอร์','เทคโนโลยีเว็บ/มือถือ','AI / Data Science','การบริหารโครงการ / ทำงานเป็นทีม','Soft Skills (การสื่อสาร การแก้ปัญหา)','อื่นๆ'])+'</div>';
+  h+='</div></div>';
+  // Branch: กำลังหางาน
+  h+='<div class="branch-section branch-amber" id="sp-searching" style="display:none">';
+  h+='<div class="branch-head">🔍 สำหรับผู้ที่กำลังหางาน</div><div class="branch-body">';
+  h+='<div class="q-wrap"><label class="q-label">ระยะเวลาที่หางานแล้ว *</label>'+mkRSp('searching_duration',['ไม่เกิน 3 เดือน','4–6 เดือน','7–12 เดือน','มากกว่า 1 ปี'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">วิธีการหางานที่ใช้ *</label>'+mkCbSp('search_method',['สมัครงานผ่านเว็บไซต์หางาน','ติดต่อโดยตรงกับบริษัท/หน่วยงาน','การสอบแข่งขัน/ราชการ','การแนะนำจากอาจารย์/เพื่อน/เครือข่าย','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">อุปสรรคที่ทำให้ยังไม่ได้งาน *</label>'+mkCbSp('job_obstacle',['งานไม่ตรงกับสาขาที่เรียน','ขาดประสบการณ์ทำงาน','เศรษฐกิจ/ตลาดแรงงานไม่เอื้อ','ข้อจำกัดส่วนตัว (สุขภาพ, ครอบครัว, สถานที่)','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">หลักสูตรควรเพิ่มความเข้มข้นด้านใด เพื่อส่งเสริมโอกาสการทำงาน</label>'+mkCbSp('skills_needed',['พื้นฐานการเขียนโปรแกรม','การพัฒนาด้วยโครงงานจริง (Project-based)','DevOps / Git / Docker','IT Support / Network','UX/UI Design','Soft Skills / การสื่อสาร','อื่นๆ'])+'</div>';
+  h+='</div></div>';
+  // Branch: ยังไม่ได้หางาน
+  h+='<div class="branch-section branch-red" id="sp-nojob" style="display:none">';
+  h+='<div class="branch-head">⏸ สำหรับผู้ที่ยังไม่ได้หางาน</div><div class="branch-body">';
+  h+='<div class="q-wrap"><label class="q-label">เหตุผลหลักที่ยังไม่ได้หางาน *</label>'+mkCbSp('no_job_reason',['มีแผนประกอบธุรกิจส่วนตัว','ภาระ/เหตุผลส่วนตัว (ครอบครัว, สุขภาพ)','รอสอบเข้าหน่วยงาน/ศึกษาต่อ','ยังไม่พร้อมเข้าสู่ตลาดแรงงาน','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">มีแผนในอนาคต *</label>'+mkRSp('future_plan',['ตั้งใจหางานภายใน 6 เดือน','ตั้งใจศึกษาต่อ','ตั้งใจทำธุรกิจส่วนตัว/ฟรีแลนซ์','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">หลักสูตรควรเพิ่มความเข้มข้นด้านใด</label>'+mkCbSp('skills_needed',['พื้นฐานการเขียนโปรแกรม','การพัฒนาด้วยโครงงานจริง','DevOps / Git / Docker','IT Support / Network','UX/UI Design','Soft Skills / การสื่อสาร','อื่นๆ'])+'</div>';
+  h+='</div></div>';
+  // Branch: กำลังศึกษาต่อ
+  h+='<div class="branch-section branch-blue" id="sp-studying" style="display:none">';
+  h+='<div class="branch-head">📚 สำหรับผู้ที่กำลังศึกษาต่อ</div><div class="branch-body">';
+  h+='<div class="q-wrap"><label class="q-label">ระดับการศึกษาที่กำลังศึกษา *</label>'+mkRSp('study_level',['ปริญญาตรี (สาขาอื่น)','ปริญญาโท','ปริญญาเอก','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">สาขาที่กำลังศึกษา *</label><input type="text" placeholder="ระบุสาขาวิชา" oninput="ans[\'study_field\']=this.value;upd()"></div>';
+  h+='<div class="q-wrap"><label class="q-label">เหตุผลที่เลือกศึกษาต่อ *</label>'+mkRSp('study_reason',['ต้องการความรู้/ทักษะที่ลึกขึ้นเพื่อโอกาสในสายอาชีพที่ดีกว่า','เพื่อเปลี่ยนสายงาน/สาขา','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">หลักสูตรปริญญาตรีช่วยเตรียมความพร้อมสำหรับการศึกษาต่อ (1=น้อยมาก 5=มากที่สุด) *</label>'+mkScSp('study_ready')+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">หลักสูตรควรเพิ่มความเข้มข้นด้านใด</label>'+mkCbSp('skills_needed',['พื้นฐานการเขียนโปรแกรม','การพัฒนาด้วยโครงงานจริง','DevOps / Git / Docker','IT Support / Network','UX/UI Design','Soft Skills / การสื่อสาร','อื่นๆ'])+'</div>';
+  h+='</div></div>';
+  h+='</div></div>';
+  return h;
+}
+function showCoopEmpBranch(val){
+  ['co-employed','co-searching','co-nojob','co-studying'].forEach(function(id){
+    var el=document.getElementById(id);if(el) el.style.display='none';
+  });
+  var map={'มีงานทำ':'co-employed','กำลังหางาน':'co-searching','ยังไม่ได้หางาน':'co-nojob','กำลังศึกษาต่อ':'co-studying'};
+  var t=map[val];if(t){var el=document.getElementById(t);if(el) el.style.display='block';}
+}
+function buildSec6Coop(){
+  var h='<div class="section">';
+  h+='<div class="section-header"><span class="section-num">6</span><span>สวัสดิการและการสนับสนุน</span></div>';
+  h+='<div class="section-body">';
+  h+='<div class="q-wrap"><label class="q-label">25. ค่าตอบแทนที่ได้รับ (บาท/เดือน) *</label>';
+  h+=mkRSp('salary',['ไม่ได้รับ','1 – 5,000','5,001 – 10,000','10,001 – 15,000','15,001 – 20,000','20,001 – 30,000','มากกว่า 30,000']);
+  h+='</div>';
+  h+='<div class="q-wrap"><label class="q-label">26. ค่าใช้จ่ายรายเดือนโดยประมาณ (อาหาร + ที่พัก + เดินทาง) *</label>';
+  h+=mkRSp('expense',['0 – 5,000','5,001 – 10,000','10,001 – 15,000','มากกว่า 15,000']);
+  h+='</div>';
+  h+='<div class="q-wrap"><label class="q-label">27. อาจารย์นิเทศให้การดูแลและติดตามผลอย่างสม่ำเสมอหรือไม่ *</label>'+mkScSp('advisor_care')+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">28. ท่านได้รับ feedback จากอาจารย์นิเทศที่เป็นประโยชน์หรือไม่ *</label>'+mkScSp('advisor_feedback')+'</div>';
+  h+='<div class="q-wrap" id="qb-future_it"><label class="q-label">29. หลังสหกิจ คาดว่าจะทำงานในสายเทคโนโลยีหรือไม่ *</label>';
+  h+=mkRSp('future_it',['ใช่','ไม่ใช่','ยังไม่แน่ใจ']);
+  h+='</div>';
+  h+='<div class="q-wrap" id="qb-employment_status"><label class="q-label">30. สถานภาพการทำงานปัจจุบัน *</label><div class="opts">';
+  h+='<label class="opt-label"><input type="radio" name="employment_status" value="มีงานทำ" onchange="setRSp(\'employment_status\',\'มีงานทำ\',false);showCoopEmpBranch(\'มีงานทำ\')"><span>มีงานทำ</span></label>';
+  h+='<label class="opt-label"><input type="radio" name="employment_status" value="กำลังหางาน" onchange="setRSp(\'employment_status\',\'กำลังหางาน\',false);showCoopEmpBranch(\'กำลังหางาน\')"><span>ไม่มีงานทำ และกำลังหางาน</span></label>';
+  h+='<label class="opt-label"><input type="radio" name="employment_status" value="ยังไม่ได้หางาน" onchange="setRSp(\'employment_status\',\'ยังไม่ได้หางาน\',false);showCoopEmpBranch(\'ยังไม่ได้หางาน\')"><span>ไม่มีงานทำ และยังไม่ได้หางาน</span></label>';
+  h+='<label class="opt-label"><input type="radio" name="employment_status" value="กำลังศึกษาต่อ" onchange="setRSp(\'employment_status\',\'กำลังศึกษาต่อ\',false);showCoopEmpBranch(\'กำลังศึกษาต่อ\')"><span>กำลังศึกษาต่อ</span></label>';
+  h+='</div></div>';
+  // Branch: มีงานทำ
+  h+='<div class="branch-section branch-green" id="co-employed" style="display:none">';
+  h+='<div class="branch-head">✅ สำหรับผู้ที่มีงานทำ</div><div class="branch-body">';
+  h+='<div class="q-wrap"><label class="q-label">ชื่อตำแหน่งงาน *</label><input type="text" placeholder="เช่น Software Developer, Data Analyst" oninput="ans[\'post_job_title\']=this.value;upd()"></div>';
+  h+='<div class="q-wrap"><label class="q-label">ลักษณะงานที่ปฏิบัติ *</label>'+mkCbSp('post_job_type',['นักพัฒนาซอฟต์แวร์ (Software Developer)','นักทดสอบระบบ (Software Tester / QA)','นักวิทยาการข้อมูล (Data Scientist / Analyst)','นักวิเคราะห์ระบบ (Business/System Analyst)','ผู้ดูแลระบบ / IT Support / Help Desk','นักออกแบบ UX/UI','ผู้เชี่ยวชาญ Cybersecurity','ผู้จัดการโครงการ / IT Consultant','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">ลักษณะการทำงาน *</label>'+mkRSp('work_type',['งานประจำ (Full-time)','งานชั่วคราว / สัญญาจ้าง (Contract/Part-time)','ธุรกิจส่วนตัว / อาชีพอิสระ','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">ประเภทองค์กร *</label>'+mkRSp('org_type',['หน่วยงานราชการ','รัฐวิสาหกิจ','บริษัทเอกชน','Startup','ธุรกิจส่วนตัว / อิสระ','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">ชื่อหน่วยงาน / บริษัท *</label><input type="text" placeholder="ระบุชื่อองค์กร" oninput="ans[\'company_name\']=this.value;upd()"></div>';
+  h+='<div class="q-wrap"><label class="q-label">ระยะเวลาที่ได้งานหลังสหกิจ *</label>'+mkRSp('time_to_job',['ภายใน 3 เดือน','4–6 เดือน','7–12 เดือน','มากกว่า 1 ปี'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">วิธีการหางานที่ใช้ *</label>'+mkCbSp('find_job_method',['สมัครงานผ่านเว็บไซต์หางาน (JobThai, JobsDB, LinkedIn ฯลฯ)','ติดต่อโดยตรงกับบริษัท/หน่วยงาน','การสอบแข่งขัน/สอบเข้าหน่วยงานราชการ','การแนะนำจากอาจารย์/เพื่อน/เครือข่าย','การฝึกงาน/สหกิจศึกษาแล้วได้งานต่อเนื่อง','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">รายได้เฉลี่ยต่อเดือน *</label>'+mkRSp('salary_range',['น้อยกว่า 15,000 บาท','15,001 – 20,000 บาท','20,001 – 25,000 บาท','25,001 – 30,000 บาท','มากกว่า 30,000 บาท'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">ความสอดคล้องของงานกับสาขาที่เรียน *</label>'+mkRSp('job_match',['สอดคล้องโดยตรง','สอดคล้องบางส่วน','ไม่สอดคล้องเลย'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">ความพึงพอใจในงานปัจจุบัน (1=น้อยมาก 5=มากที่สุด) *</label>'+mkScSp('job_satisfaction')+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">ความเพียงพอของความรู้จากหลักสูตรต่อการทำงานจริง (1=น้อยมาก 5=มากที่สุด) *</label>'+mkScSp('knowledge_sufficiency')+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">สหกิจศึกษามีส่วนช่วยให้ได้งานปัจจุบันไหม (1=น้อยมาก 5=มากที่สุด)</label>'+mkScSp('coop_helped_job')+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">ได้รับการชักชวนให้สมัครงานต่อที่บริษัทที่ฝึกสหกิจหรือไม่</label>';
+  h+=mkRSp('invited_back',['ได้รับการชักชวน','ไม่ได้รับการชักชวน']);
+  h+='</div>';
+  h+='<div class="q-wrap"><label class="q-label">ทักษะจากหลักสูตรที่นำมาใช้จริงในการทำงาน</label>'+mkCbSp('skills_used',['การเขียนโปรแกรม','ระบบฐานข้อมูล','เครือข่ายคอมพิวเตอร์','เทคโนโลยีเว็บ/มือถือ','AI / Data Science','การบริหารโครงการ / ทำงานเป็นทีม','Soft Skills (การสื่อสาร การแก้ปัญหา)','อื่นๆ'])+'</div>';
+  h+='</div></div>';
+  // Branch: กำลังหางาน
+  h+='<div class="branch-section branch-amber" id="co-searching" style="display:none">';
+  h+='<div class="branch-head">🔍 สำหรับผู้ที่กำลังหางาน</div><div class="branch-body">';
+  h+='<div class="q-wrap"><label class="q-label">ระยะเวลาที่หางานแล้ว *</label>'+mkRSp('searching_duration',['ไม่เกิน 3 เดือน','4–6 เดือน','7–12 เดือน','มากกว่า 1 ปี'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">วิธีการหางานที่ใช้ *</label>'+mkCbSp('search_method',['สมัครงานผ่านเว็บไซต์หางาน','ติดต่อโดยตรงกับบริษัท/หน่วยงาน','การสอบแข่งขัน/ราชการ','การแนะนำจากอาจารย์/เพื่อน/เครือข่าย','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">อุปสรรคที่ทำให้ยังไม่ได้งาน *</label>'+mkCbSp('job_obstacle',['งานไม่ตรงกับสาขาที่เรียน','ขาดประสบการณ์ทำงาน','เศรษฐกิจ/ตลาดแรงงานไม่เอื้อ','ข้อจำกัดส่วนตัว (สุขภาพ, ครอบครัว, สถานที่)','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">หลักสูตรควรเพิ่มความเข้มข้นด้านใด เพื่อส่งเสริมโอกาสการทำงาน</label>'+mkCbSp('skills_needed',['พื้นฐานการเขียนโปรแกรม','การพัฒนาด้วยโครงงานจริง (Project-based)','DevOps / Git / Docker','IT Support / Network','UX/UI Design','Soft Skills / การสื่อสาร','อื่นๆ'])+'</div>';
+  h+='</div></div>';
+  // Branch: ยังไม่ได้หางาน
+  h+='<div class="branch-section branch-red" id="co-nojob" style="display:none">';
+  h+='<div class="branch-head">⏸ สำหรับผู้ที่ยังไม่ได้หางาน</div><div class="branch-body">';
+  h+='<div class="q-wrap"><label class="q-label">เหตุผลหลักที่ยังไม่ได้หางาน *</label>'+mkCbSp('no_job_reason',['มีแผนประกอบธุรกิจส่วนตัว','ภาระ/เหตุผลส่วนตัว (ครอบครัว, สุขภาพ)','รอสอบเข้าหน่วยงาน/ศึกษาต่อ','ยังไม่พร้อมเข้าสู่ตลาดแรงงาน','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">มีแผนในอนาคต *</label>'+mkRSp('future_plan',['ตั้งใจหางานภายใน 6 เดือน','ตั้งใจศึกษาต่อ','ตั้งใจทำธุรกิจส่วนตัว/ฟรีแลนซ์','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">หลักสูตรควรเพิ่มความเข้มข้นด้านใด</label>'+mkCbSp('skills_needed',['พื้นฐานการเขียนโปรแกรม','การพัฒนาด้วยโครงงานจริง','DevOps / Git / Docker','IT Support / Network','UX/UI Design','Soft Skills / การสื่อสาร','อื่นๆ'])+'</div>';
+  h+='</div></div>';
+  // Branch: กำลังศึกษาต่อ
+  h+='<div class="branch-section branch-blue" id="co-studying" style="display:none">';
+  h+='<div class="branch-head">📚 สำหรับผู้ที่กำลังศึกษาต่อ</div><div class="branch-body">';
+  h+='<div class="q-wrap"><label class="q-label">ระดับการศึกษาที่กำลังศึกษา *</label>'+mkRSp('study_level',['ปริญญาตรี (สาขาอื่น)','ปริญญาโท','ปริญญาเอก','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">สาขาที่กำลังศึกษา *</label><input type="text" placeholder="ระบุสาขาวิชา" oninput="ans[\'study_field\']=this.value;upd()"></div>';
+  h+='<div class="q-wrap"><label class="q-label">เหตุผลที่เลือกศึกษาต่อ *</label>'+mkRSp('study_reason',['ต้องการความรู้/ทักษะที่ลึกขึ้นเพื่อโอกาสในสายอาชีพที่ดีกว่า','เพื่อเปลี่ยนสายงาน/สาขา','อื่นๆ'])+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">หลักสูตรปริญญาตรีช่วยเตรียมความพร้อมสำหรับการศึกษาต่อ (1=น้อยมาก 5=มากที่สุด) *</label>'+mkScSp('study_ready')+'</div>';
+  h+='<div class="q-wrap"><label class="q-label">หลักสูตรควรเพิ่มความเข้มข้นด้านใด</label>'+mkCbSp('skills_needed',['พื้นฐานการเขียนโปรแกรม','การพัฒนาด้วยโครงงานจริง','DevOps / Git / Docker','IT Support / Network','UX/UI Design','Soft Skills / การสื่อสาร','อื่นๆ'])+'</div>';
+  h+='</div></div>';
+  h+='</div></div>';
+  return h;
+}
+function buildSpecialForm() {
+  const sections = [
+    {num:0, title:'ข้อมูลนิสิต', questions:[
+      {id:'student_id', type:'lookup', label:'รหัสนิสิต', required:true, placeholder:'กรอกรหัสนิสิต 10 หลัก'},
+      {id:'first_name',  type:'display', label:'ชื่อ'},
+      {id:'last_name',   type:'display', label:'นามสกุล'},
+      {id:'program',     type:'display', label:'แผนการเรียน'},
+      {id:'advisor',     type:'display', label:'อาจารย์ที่ปรึกษา'},
+    ]},
+    {num:1, title:'ข้อมูลโปรเจก', questions:[
+      {id:'project_name',    type:'display', label:'ชื่อโปรเจก / หัวข้อ'},
+      {id:'project_type',    type:'display', label:'ประเภทโปรเจก'},
+      {id:'project_team',    type:'display', label:'ลักษณะการทำโปรเจก'},
+      {id:'project_members', type:'display', label:'จำนวนสมาชิก (คน)'},
+    ]},
+    {num:2, title:'การบรรลุผลการเรียนรู้ (CLO/PLO)', questions:[
+      {id:'pre_clo_weak', type:'checkbox', label:'ก่อนทำโปรเจก CLO ด้านไหนที่คิดว่าตัวเองยังอ่อน *', required:true,
+        opts:['CLO1 — พัฒนาระบบสารสนเทศได้','CLO2 — เลือกใช้เทคโนโลยีที่เหมาะสมในการแก้ปัญหาทางทางเทคโนโลยีสารสนเทศได้','CLO3 — พัฒนางานทางด้านเทคโนโลยีสารสนเทศโดยบูรณาการความรู้ตามข้อกำหนดความต้องการในโครงงานได้','CLO4 — ปฏิบัติงานที่รับผิดชอบและทำงานตามที่ได้รับมอบหมายจากตามโครงงานที่กำหนด','CLO5 — นำเสนองานที่ได้รับมอบหมาย และทำงานร่วมกับผู้อื่นได้ โดยนึกถึงจรรยาบรรณและความรับผิดชอบต่อวิชาชีพ']},
+      {id:'clo1', type:'radio', label:'CLO1 — พัฒนาระบบสารสนเทศได้ *', required:true,
+        opts:['ใช่ ทำครบทั้งหมด (วิเคราะห์ + ออกแบบ + พัฒนา)','ทำบางส่วน','ไม่ได้ทำ']},
+      {id:'clo1_detail', type:'radio', label:'โปรเจกส่งมอบครบ / ถูกนำไปใช้จริงไหม *', required:true,
+        opts:['ส่งมอบครบและใช้งานได้จริง','ส่งมอบครบแต่ยังไม่ได้ใช้จริง','ส่งมอบบางส่วน','ยังไม่เสร็จ']},
+      {id:'clo2', type:'scale', label:'CLO2 — เลือกใช้เทคโนโลยีที่เหมาะสมในการแก้ปัญหาทางทางเทคโนโลยีสารสนเทศได้ *', required:true},
+      {id:'clo3', type:'scale', label:'CLO3 — พัฒนางานทางด้านเทคโนโลยีสารสนเทศโดยบูรณาการความรู้ตามข้อกำหนดความต้องการในโครงงานได้ *', required:true},
+      {id:'clo4', type:'scale', label:'CLO4 — ปฏิบัติงานที่รับผิดชอบและทำงานตามที่ได้รับมอบหมายจากตามโครงงานที่กำหนด *', required:true},
+      {id:'clo5', type:'scale', label:'CLO5 — นำเสนองานที่ได้รับมอบหมาย และทำงานร่วมกับผู้อื่นได้ โดยนึกถึงจรรยาบรรณและความรับผิดชอบต่อวิชาชีพ *', required:true},
+      {id:'soft_skills_weak', type:'checkbox', label:'Soft skills ด้านใดที่คิดว่าต้องพัฒนาเพิ่ม (CLO4, CLO5, PLO4)',
+        opts:['การรับ feedback อย่างสร้างสรรค์','การแก้ conflict ในทีม','การนำเสนอต่อ stakeholder','การบริหารเวลา / deadline','การเขียนเอกสาร / รายงาน','อื่นๆ']},
+      {id:'plo_weak', type:'checkbox', label:'PLO ที่คิดว่าต้องพัฒนาเพิ่ม',
+        opts:['PLO1 — แก้ปัญหางานด้านเทคโนโลยีสารสนเทศ โดยใช้องค์ความรู้ทางคอมพิวเตอร์และเทคโนโลยีสารสนเทศได้อย่างถูกต้องและเหมาะสมกับบริบท','PLO2 — ออกแบบฐานข้อมูลที่เหมาะสมกับประเภทของข้อมูลและการใช้งาน โดยใช้หลักการเขียนโปรแกรมและการจัดเก็บข้อมูลอย่างเป็นระบบ','PLO3 — พัฒนาระบบสารสนเทศที่สอดคล้องกับบริบทของปัญหาและความต้องการของผู้ใช้งาน โดยคำนึงถึงความปลอดภัยและความมั่นคงของสารสนเทศ','PLO4 — ทำงานร่วมกับผู้อื่นตามบทบาทหน้าที่อย่างรับผิดชอบ โดยสื่อสารข้อมูลได้อย่างเหมาะสมกับบริบท และพัฒนาตนเองอย่างต่อเนื่อง','PLO5 — ปฏิบัติงานด้านเทคโนโลยีสารสนเทศ โดยคำนึงถึงจริยธรรมการใช้เทคโนโลยีสารสนเทศและปัญญาประดิษฐ์','PLO6 — ปฏิบัติงานด้านเทคโนโลยีสารสนเทศในสถานประกอบการด้วยความซื่อสัตย์และรับผิดชอบ โดยใช้ความรู้และทักษะด้านคอมพิวเตอร์และเทคโนโลยีสารสนเทศได้สอดคล้องกับบริบทและความต้องการของสถานประกอบการ','ไม่มี บรรลุได้ดีทุก PLO']},
+    ]},
+    {num:3, title:'การเรียนรู้และหลักสูตร', questions:[
+      {id:'univ_ready', type:'scale', label:'ความรู้จากมหาวิทยาลัยเพียงพอสำหรับการทำโปรเจกไหม *', required:true},
+      {id:'useful_subject', type:'text', label:'วิชาที่มีประโยชน์มากที่สุดสำหรับโปรเจก', placeholder:'เช่น การพัฒนาเว็บ, ฐานข้อมูล'},
+      {id:'add_subject', type:'text', label:'วิชาหรือทักษะที่อยากให้หลักสูตรเพิ่มเติม', placeholder:'เช่น DevOps, Cloud Computing'},
+    ]},
+    {num:4, title:'ทักษะที่ใช้ในโปรเจก', questions:[
+      {id:'lang', type:'checkbox', label:'Programming Languages ที่ใช้',
+        opts:['Python','JavaScript','TypeScript','Java','C#','PHP','Dart/Flutter','SQL','R','C/C++','Go','อื่นๆ']},
+      {id:'db', type:'checkbox', label:'Database / DBMS ที่ใช้',
+        opts:['MySQL','PostgreSQL','MongoDB','SQLite','Firebase','Oracle','Redis','อื่นๆ']},
+      {id:'framework', type:'checkbox', label:'Frameworks / Libraries ที่ใช้',
+        opts:['React','Vue.js','Angular','Next.js','Express.js','Django','Spring Boot','Laravel','Flutter','อื่นๆ']},
+      {id:'tools', type:'checkbox', label:'Tools / DevOps ที่ใช้',
+        opts:['Git / GitHub','Docker','VS Code','Figma','Postman','Linux','CI/CD','Cloud (AWS/GCP/Azure)','อื่นๆ']},
+      {id:'other_skills', type:'checkbox', label:'Other Skills ที่ใช้',
+        opts:['Machine Learning','Data Visualization','REST API','GraphQL','UX/UI Design','Testing / QA','อื่นๆ']},
+      {id:'ai_use', type:'radio', label:'มีการใช้ AI Tools ช่วยในการทำโปรเจกไหม *', required:true,
+        opts:['ใช้ประจำ','ใช้บ้าง','ไม่ได้ใช้']},
+      {id:'ai_tools', type:'text', label:'AI Tools ที่ใช้', placeholder:'เช่น ChatGPT, GitHub Copilot, Claude'},
+      {id:'data_privacy', type:'radio', label:'โปรเจกมีการจัดการ Data Privacy ไหม *', required:true,
+        opts:['มีนโยบายชัดเจน','มีบ้างแต่ไม่ครบ','ไม่มี']},
+    ]},
+    {num:5, title:'ผลลัพธ์และการนิเทศ', questions:[
+      {id:'project_difficulty', type:'scale', label:'ระดับความยากของโปรเจก *', required:true},
+      {id:'project_presented', type:'radio', label:'ได้นำเสนอ / ส่งประกวด / เผยแพร่ผลงานไหม *', required:true,
+        opts:['นำเสนอและส่งประกวด','นำเสนอภายในสาขา/คณะ','ยังไม่ได้นำเสนอ']},
+      {id:'project_continued', type:'radio', label:'โปรเจกถูกนำไปพัฒนาต่อ / ใช้งานจริงหลังจบไหม',
+        opts:['ใช่ กำลังพัฒนาต่อ','ใช่ ใช้งานจริงแล้ว','ไม่มีแผน','ยังไม่แน่ใจ']},
+      {id:'project_satisfaction', type:'scale', label:'ความพึงพอใจในโปรเจกที่ได้ทำ *', required:true},
+      {id:'advisor_care', type:'scale', label:'อาจารย์ที่ปรึกษาดูแลและติดตามความก้าวหน้าอย่างสม่ำเสมอ *', required:true},
+      {id:'advisor_feedback', type:'scale', label:'Feedback ของอาจารย์ที่ปรึกษามีประโยชน์ต่อการพัฒนาโปรเจก *', required:true},
+    ]},
+    {num:6, title:'การมีงานทำ', questions:[
+      {id:'future_it', type:'radio', label:'คาดว่าจะทำงานในสายเทคโนโลยีไหม *', required:true,
+        opts:['ใช่','ไม่แน่ใจ','ไม่ ต้องการทำสายอื่น']},
+      {id:'job_status', type:'radio', label:'สถานภาพปัจจุบัน *', required:true,
+        opts:['ได้งานแล้ว','กำลังหางาน','ยังไม่ได้หางาน','กำลังศึกษาต่อ']},
+      {id:'special_helped_job', type:'scale', label:'ปัญหาพิเศษมีส่วนช่วยให้ได้งานปัจจุบันไหม (1=น้อยมาก 5=มากที่สุด)'},
+    ]},
+    {num:7, title:'คำแนะนำและข้อเสนอแนะ', questions:[
+      {id:'advice_junior', type:'textarea', label:'คำแนะนำสำหรับรุ่นน้องที่จะทำโปรเจกปัญหาพิเศษ', placeholder:'แนะนำการเตรียมตัว เลือกหัวข้อ หรือการทำงานร่วมกับอาจารย์'},
+      {id:'advice_curriculum', type:'textarea', label:'ข้อเสนอแนะต่อหลักสูตรเพื่อช่วยให้ทำโปรเจกได้ดีขึ้น', placeholder:'วิชาที่ควรเพิ่ม ปรับปรุง หรือตัดออก'},
+      {id:'other_feedback', type:'textarea', label:'ข้อเสนอแนะอื่นๆ', placeholder:'ความคิดเห็นเพิ่มเติม'},
+    ]},
+  ];
+
+  // reuse buildForm logic — build sections
+  const c = document.getElementById('form-container');
+  let h = '';
+  sections.forEach(sec => {
+    if(sec.num === 6){h += buildSec6Sp(); return;}
+    h += `<div class="section"><div class="section-header"><span class="section-num">${sec.num}</span><span>${sec.title}</span></div><div class="section-body">`;
+    sec.questions.forEach(q => {
+      h += `<div class="q-wrap" id="qw-${q.id}"><label class="q-label">${q.label}</label>`;
+      if(q.type==='lookup'){
+        h += `<div style="display:flex;gap:8px"><input type="text" id="sid-input" maxlength="10" placeholder="${q.placeholder||''}" style="flex:1" oninput="if(this.value.length===10)lookupStudent(this.value)"><span id="lookup-status" style="font-size:12px;color:var(--muted);align-self:center"></span></div>`;
+      } else if(q.type==='display'){
+        h += `<div id="${q.id}-display" style="margin-top:8px;min-height:28px;padding:6px 10px;background:#f8fafc;border-radius:8px;font-size:14px;color:var(--muted)">—</div>`;
+      } else if(q.type==='text'){
+        h += `<input type="text" placeholder="${q.placeholder||''}" oninput="ans['${q.id}']=this.value;upd()">`;
+      } else if(q.type==='textarea'){
+        h += `<textarea placeholder="${q.placeholder||''}" oninput="ans['${q.id}']=this.value;upd()"></textarea>`;
+      } else if(q.type==='radio'){
+        h += '<div class="opts">';
+        q.opts.forEach(o=>{
+          const isOther=o==='อื่นๆ';
+          h += `<label class="opt-label"><input type="radio" name="${q.id}" value="${o}" onchange="setRSp('${q.id}','${o}',${isOther})"><span>${o}</span></label>`;
+          if(isOther) h += `<input type="text" id="${q.id}_other_input" style="display:none;margin-top:4px" placeholder="โปรดระบุ..." oninput="ans['${q.id}_other']=this.value">`;
+        });
+        h += '</div>';
+      } else if(q.type==='checkbox'){
+        h += '<div class="opts">';
+        q.opts.forEach(o=>{
+          const isOther=o==='อื่นๆ';
+          h += `<label class="opt-label"><input type="checkbox" value="${o}" onchange="setCbSp('${q.id}',this,${isOther})"><span>${o}</span></label>`;
+          if(isOther) h += `<input type="text" id="${q.id}_other_input" style="display:none;margin-top:4px" placeholder="โปรดระบุ..." oninput="ans['${q.id}_other']=this.value">`;
+        });
+        h += '</div>';
+      } else if(q.type==='scale'){
+        h += '<div class="scale-row">';
+        for(let i=1;i<=5;i++) h += `<button type="button" class="scale-btn" onclick="setSc('${q.id}',${i},this)">${i}</button>`;
+        h += '</div>';
+        h += '<div class="scale-labels"><span>'+(q.lo||'น้อยมาก')+'</span><span>'+(q.hi||'มากที่สุด')+'</span></div>';
+      }
+      h += '</div>';
+    });
+    h += '</div></div>';
+  });
+  h += '<div class="submit-wrap"><button class="btn-submit" id="btn-sub-sp" onclick="subSp()"><span class="btn-text">ส่งแบบสอบถาม</span><span class="spinner"></span></button></div>';
+  activeReqIds = [
+    'student_id',
+    'pre_clo_weak','clo1','clo1_detail','clo2','clo3','clo4','clo5',
+    'univ_ready','ai_use','data_privacy',
+    'project_difficulty','project_presented','project_satisfaction',
+    'advisor_care','advisor_feedback','future_it','employment_status'
+  ];
+  c.innerHTML = h;
+
+  // conditional: project_members แสดงเมื่อเลือกกลุ่ม
+  document.querySelectorAll('input[name="project_team"]').forEach(el => {
+    el.addEventListener('change', function() {
+      const mw = document.getElementById('qw-project_members');
+      if(mw) mw.style.display = this.value === 'ทำเป็นกลุ่ม' ? 'block' : 'none';
+    });
+  });
+  // hide project_members by default
+  const pmw = document.getElementById('qw-project_members');
+  if(pmw) pmw.style.display = 'none';
+
+  upd();
 }
 init();
 </script>

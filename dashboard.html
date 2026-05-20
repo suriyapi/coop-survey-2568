@@ -157,7 +157,7 @@ select{padding:4px 10px;border:1px solid var(--border);border-radius:8px;font-fa
   <div class="loading"><div class="spin-lg"></div><div>กำลังโหลดข้อมูล...</div></div>
 </div>
 <script>
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwOn6c2qebWU3q-aSZ90FOdR4zhFCv86OwegmqYd-YbupscHVPQnETdEAk_fzoWg_g/exec";
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbx-E1JmP4nAeI20vUYeeamIJN9FBdmuE-6uCLP9M8K6dbFRei7Tc2JTRh_W5x_U8V-M/exec";
 const C=["#2563eb","#0d9488","#d97706","#e11d48","#7c3aed","#0891b2","#65a30d","#db2777","#16a34a","#0f766e"];
 let all=[],filtered=[],ch={};
 function cnt(rows,f){const c={};rows.forEach(r=>{const v=r[f];if(!v)return;if(Array.isArray(v))v.forEach(x=>{c[x]=(c[x]||0)+1;});else c[String(v)]=(c[String(v)]||0)+1;});return c;}
@@ -256,6 +256,7 @@ function render(rows){
 </div>
 <div class="chart-grid-3" style="margin-top:16px">
   <div class="card"><div class="card-title">Software / Tools</div><div class="card-sub">Top 8 ที่ใช้จริงในองค์กร — CLO 2, PLO1</div><div class="bar-list" id="tools-bars"></div></div>
+  <div class="card"><div class="card-title">ประเภทกิจการ (Business Type)</div><div class="card-sub">การกระจายประเภทสถานประกอบการ — AUN-QA C6</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center"><div class="chart-sm"><canvas id="btype-pie"></canvas></div><div class="pie-legend" id="btype-leg"></div></div></div>
 </div>
 <div class="sec-label">การเรียนรู้และหลักสูตร — AUN-QA C3</div>
 <div class="chart-grid">
@@ -318,7 +319,7 @@ function render(rows){
     {l:"CLO เฉลี่ย",v:overallCLO.toFixed(2)+"/5",s:"CLO 1–5",c:"#0d9488"},
     {l:"แนะนำบริษัท",v:avg(rows,"recommend").toFixed(2)+"/5",s:"เฉลี่ย",c:"#d97706"},
     {l:"สายเทคโนโลยี",v:pct(rows.filter(r=>r.future_it==="ใช่").length,n)+"%",s:"วางแผนทำงาน",c:"#7c3aed"},
-    {l:"ได้งานแล้ว",v:pct(rows.filter(r=>r.job_status==="ได้งานแล้ว").length,n)+"%",s:"สถานะปัจจุบัน",c:"#16a34a"},
+    {l:"ได้งานแล้ว",v:pct(rows.filter(r=>r.employment_status==="มีงานทำ"||r.job_status==="ได้งานแล้ว").length,n)+"%",s:"สถานะปัจจุบัน",c:"#16a34a"},
     {l:"ถูกชักชวน",v:pct(rows.filter(r=>r.invited_back==="ได้รับการชักชวน").length,n)+"%",s:"ให้สมัครต่อ",c:"#e11d48"},
     {l:"อาจารย์นิเทศ",v:avg(rows,"advisor_care").toFixed(2)+"/5",s:"ความสม่ำเสมอ",c:"#0891b2"},
     {l:"ความพร้อม ม.",v:univR.toFixed(2)+"/5",s:"ความรู้เพียงพอ",c:"#65a30d"},
@@ -367,6 +368,10 @@ function render(rows){
     // Tools bars
     mkBars("tools-bars",cnt(rows,"tools"),"#0891b2",8);
 
+    // Business type pie
+    const btColors2=["#2563eb","#0d9488","#d97706","#7c3aed","#0891b2","#65a30d","#e11d48","#64748b"];
+    mkPie("btype-pie","btype-leg",topN(cnt(rows,"business_type"),8),btColors2);
+
     // Skill cloud
     const sk=topN(cnt(rows,"other_skills"),20),skM=sk[0]?.[1]||1;
     document.getElementById("skill-cloud").innerHTML=sk.map(([k,v])=>`<span class="tag ${v/skM>=.7?"xl":v/skM>=.4?"lg":""}">${k}(${v})</span>`).join("");
@@ -403,7 +408,9 @@ function render(rows){
     document.getElementById("salary-bars").innerHTML=salO.map(k=>`<div class="bar-row"><div class="bar-label">${k}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round((salC[k]||0)/salM*100)}%;background:#0d9488"><span>${salC[k]||0}</span></div></div></div>`).join("");
 
     // Job status pie
-    mkPie("js-pie","js-leg",topN(cnt(rows,"job_status")),["#16a34a","#d97706","#64748b"]);
+    const jsC=cnt(rows,"employment_status");
+    if(!Object.keys(jsC).length){const old=cnt(rows,"job_status");Object.keys(old).forEach(k=>{jsC[k]=(jsC[k]||0)+old[k];});}
+    mkPie("js-pie","js-leg",topN(jsC),["#16a34a","#d97706","#e11d48","#7c3aed","#64748b"]);
 
     // Advisor cards & scores
     const advC=cnt(rows,"advisor");
@@ -430,7 +437,7 @@ function render(rows){
       const sal=cr.map(r=>String(r.salary||"")).filter(Boolean);
       const salMode=sal.length?sal.sort((a,b)=>sal.filter(v=>v===b).length-sal.filter(v=>v===a).length)[0]:"—";
       const coding=cr.filter(r=>r.need_coding==="ต้องเขียนโปรแกรม").length>cr.length/2;
-      return{name:c,n:cr.length,rec,inv:pct(cr.filter(r=>r.invited_back==="ได้รับการชักชวน").length,cr.length),job:pct(cr.filter(r=>r.job_status==="ได้งานแล้ว").length,cr.length),bt,jt,sal:salMode,coding};
+      return{name:c,n:cr.length,rec,inv:pct(cr.filter(r=>r.invited_back==="ได้รับการชักชวน").length,cr.length),job:pct(cr.filter(r=>r.employment_status==="มีงานทำ"||r.job_status==="ได้งานแล้ว").length,cr.length),bt,jt,sal:salMode,coding};
     }).sort((a,b)=>b.rec-a.rec);
     window.compPage=0;
     window.compPerPage=10;
